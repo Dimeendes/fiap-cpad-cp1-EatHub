@@ -48,7 +48,7 @@ export default function Cardapio() {
   ];
  
   const handleAddToCart = (item) => {
-    alert('${item.name} adicionado ao carrinho!');
+    alert(`${item.name} adicionado ao carrinho!`);
   };
  
   const currentItems = activeTab === 'comidas' ? comidas : bebidas;
