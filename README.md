@@ -23,6 +23,8 @@ Nosso projeto foi estruturando de maneira que cada integrante seria responsável
 - Configurações
 - Pedido
 - Cardápio
+- Carrinho
+- Pagamento
 - Sair
 
 Os hooks utilizados foram useState, que permite que os botões alterem o estado da interface, e useRoute, que controla movimento entre as telas.
@@ -45,6 +47,8 @@ Demontração:
 <img width="313" height="676" alt="image" src="https://github.com/user-attachments/assets/f8dd23b5-fb7a-4bf4-8508-514d0bcffca2" />
 <img width="309" height="667" alt="image" src="https://github.com/user-attachments/assets/bd7c358d-4ac2-494a-bea4-731266e3dbbd" />
 <img width="307" height="668" alt="image" src="https://github.com/user-attachments/assets/8690f4dc-98a1-4d45-a55f-2e515cbec626" />
+<img width="314" height="673" alt="image" src="https://github.com/user-attachments/assets/79644a78-d5c5-4e1e-987d-4e968d817ac1" />
+<img width="314" height="673" alt="image" src="https://github.com/user-attachments/assets/79644a78-d5c5-4e1e-987d-4e968d817ac1" />
 <img width="314" height="673" alt="image" src="https://github.com/user-attachments/assets/79644a78-d5c5-4e1e-987d-4e968d817ac1" />
 
 Link do vídeo demonstrativo
