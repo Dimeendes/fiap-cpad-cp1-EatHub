@@ -8,6 +8,8 @@ Israel Karacsony de Camargo Nunes - RM: 563435
 
 Diego Antonio Silva Mendes - RM: 565509
 
+Thiago Ono Sakai - RM: 563448
+
 Sobre o Projeto:
  O app que desenvolvemos chama-se EatHub, e o problema que buscamos resolver por meio deste app são as grandes filas na cantina. 
 Essas filas costumam atrasar a rotina dos estudantes e até dos funcionários, que buscam comer/beber algo durante o intervalo, e acabam se deparando com filas gigantescas na cantina.
