@@ -38,3 +38,6 @@ Como clonar o projeto:
 - Execute o clone: git clone https://github.com/Dimeendes/fiap-cpad-cp1-EatHub.git
 
 Demontração:
+
+<img width="313" height="669" alt="image" src="https://github.com/user-attachments/assets/d4734882-1264-40b6-be22-ff102cbcdabc" />
+
