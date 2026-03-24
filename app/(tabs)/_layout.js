@@ -17,13 +17,7 @@ export default function Layout() {
       },
       headerShadowVisible: false
       }}>
-      <Tabs.Screen
-        name="pedidos"
-        options={{
-          title: 'Pedidos',
-          tabBarIcon: ({ color }) => <Ionicons name="pizza" size={24} color={color} />,
-        }}
-      />
+      
       <Tabs.Screen
         name="config"
         options={{
