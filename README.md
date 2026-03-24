@@ -48,6 +48,9 @@ Demontração:
 <img width="309" height="667" alt="image" src="https://github.com/user-attachments/assets/bd7c358d-4ac2-494a-bea4-731266e3dbbd" />
 <img width="307" height="668" alt="image" src="https://github.com/user-attachments/assets/8690f4dc-98a1-4d45-a55f-2e515cbec626" />
 <img width="314" height="673" alt="image" src="https://github.com/user-attachments/assets/79644a78-d5c5-4e1e-987d-4e968d817ac1" />
+<img width="416" height="703" alt="image" src="https://github.com/user-attachments/assets/d31412a2-3f77-424f-a97b-d487b0e8221d" />
+<img width="353" height="744" alt="Captura de tela 2026-03-23 194854" src="https://github.com/user-attachments/assets/c345eeab-7c60-4b2d-84a4-817a3c88c99c" />
+
 
 
 Link do vídeo demonstrativo
