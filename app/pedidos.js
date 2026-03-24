@@ -3,7 +3,7 @@ import { useRouter } from 'expo-router';
 import { useState } from 'react';
  
 export default function pedidos() {
-  const router = useRouter();
+  const router = useRouter('/pedidos');
   const[activeTab, setActiveTab] = useState('preparando');
   const [pedidos, setPedidos] = useState([
     {

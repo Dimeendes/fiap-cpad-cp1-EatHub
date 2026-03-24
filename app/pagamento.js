@@ -3,7 +3,7 @@ import { View, Text, TouchableOpacity, StyleSheet, ScrollView } from 'react-nati
 import { useRouter } from 'expo-router';
 
 export default function Pagamento() {
-  const router = useRouter();
+  const router = useRouter('/pagamento');
   const [metodo, setMetodo] = useState('pix'); // Estado para controlar seleção
 
   const MetodoItem = ({ id, titulo, icon }) => (
@@ -70,6 +70,7 @@ export default function Pagamento() {
         <TouchableOpacity
           style={styles.botaoConfirmar}
           onPress={() =>router.push('/cardapio')}
+
         >
           <Text style={styles.botaoTexto}>CONFIRMAR E PAGAR</Text>
         </TouchableOpacity>

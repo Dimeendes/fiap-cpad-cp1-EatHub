@@ -52,13 +52,7 @@ export default function Layout() {
           tabBarIcon: ({ color }) => <Ionicons name="cart" size={24} color={color} />,
         }}
       />
-      <Tabs.Screen
-        name="pagamento"
-        options={{
-          title: 'Pagamento',
-          tabBarIcon: ({ color }) => <Ionicons name="cash" size={24} color={color} />,
-        }}
-      />
+      
     </Tabs>
   );
 }
