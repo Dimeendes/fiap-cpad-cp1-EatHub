@@ -20,11 +20,11 @@ export default function Home() {
             <Text style={styles.paragrafo}>Senha:</Text>
             <TextInput style={styles.caixaTexto} onChangeText={setTextSenha} value={textSenha} placeholder='Digite sua senha' placeholderTextColor={'#bbb'}/>
 
-            <TouchableOpacity style={styles.estudante} onPress={() => router.push('/cardapio')}>
+            <TouchableOpacity style={styles.estudante} onPress={() => router.push('Estudante/cardapio')}>
               <Text style={styles.botaoTexto}>Estudante</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.funcionario} onPress={() => router.push('/pedidos')}>
+            <TouchableOpacity style={styles.funcionario} onPress={() => router.push('Funcionarios/pedidos')}>
               <Text style={styles.textoAdmin}>Funcionario</Text>
             </TouchableOpacity>
         </View>

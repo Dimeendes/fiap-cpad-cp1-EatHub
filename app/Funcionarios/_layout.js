@@ -32,27 +32,13 @@ export default function Layout() {
         }}
       />
       <Tabs.Screen
-         name="cardapio"
-        options={{
-          title: 'cardapio',
-          tabBarIcon: ({ color }) => <Ionicons name="reader-outline" size={24} color={color}/>
-        }}
-      />
-      <Tabs.Screen
         name="sair"
         options={{
           title: 'Sair',
           tabBarIcon: ({ color }) => <Ionicons name="close" size={24} color={color} />,
         }}
       />
-      <Tabs.Screen
-        name="carrinho"
-        options={{
-          title: 'Carrinho',
-          tabBarIcon: ({ color }) => <Ionicons name="cart" size={24} color={color} />,
-        }}
-      />
-      
+
     </Tabs>
   );
 }
