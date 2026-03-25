@@ -5,6 +5,12 @@ import { useRouter } from 'expo-router';
 export default function Pagamento() {
   const router = useRouter('/pagamento');
   const [metodo, setMetodo] = useState('pix'); // Estado para controlar seleção
+  const subtotal = 11;
+  const desconto = 0.05
+  const total = metodo === 'pix' ? subtotal * (1-desconto) : subtotal
+  const totalDesconto = subtotal- total
+  const corDesconto = totalDesconto > 0.00 ? '#00FF00' : '#ffffff';
+  
 
   const MetodoItem = ({ id, titulo, icon }) => (
     <TouchableOpacity 
@@ -29,15 +35,6 @@ export default function Pagamento() {
           <Text style={styles.headerTitle}>Pagamento</Text>
         </View>
 
-        {/* Resumo do Endereço */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Entregar em:</Text>
-          <View style={styles.addressCard}>
-            <Text style={styles.addressText}>Rua das Flores, 123 - Apt 42</Text>
-            <Text style={styles.addressSub}>São Paulo, SP</Text>
-          </View>
-        </View>
-
         {/* Métodos de Pagamento */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Escolha o método:</Text>
@@ -46,20 +43,19 @@ export default function Pagamento() {
           <MetodoItem id="cartao" titulo="Cartão de Crédito" icon="💳" />
           <MetodoItem id="dinheiro" titulo="Dinheiro / Maquininha" icon="💵" />
         </View>
-
         {/* Resumo de Valores */}
         <View style={styles.resumoContainer}>
           <View style={styles.resumoRow}>
             <Text style={styles.resumoLabel}>Subtotal</Text>
-            <Text style={styles.resumoValor}>R$ 78,90</Text>
+            <Text style={styles.resumoValor}>R$ {subtotal.toFixed(2)}</Text>
           </View>
           <View style={styles.resumoRow}>
-            <Text style={styles.resumoLabel}>Taxa de Entrega</Text>
-            <Text style={[styles.resumoValor, { color: '#00FF00' }]}>GRÁTIS</Text>
+            <Text style={styles.resumoLabel}>Desconto</Text>
+            <Text style={[styles.resumoValor, {color: corDesconto}]}>- R$ {(totalDesconto).toFixed(2)}</Text> 
           </View>
           <View style={[styles.resumoRow, styles.totalDestaque]}>
             <Text style={styles.totalLabel}>TOTAL</Text>
-            <Text style={styles.totalValor}>R$ 78,90</Text>
+            <Text style={styles.totalValor}>R$ {total.toFixed(2)}</Text>
           </View>
         </View>
 
@@ -75,7 +71,7 @@ export default function Pagamento() {
           <Text style={styles.botaoTexto}>CONFIRMAR E PAGAR</Text>
         </TouchableOpacity>
         
-        <TouchableOpacity style={styles.botaoVoltar} onPress={() => router.push('/cardapio')}>
+        <TouchableOpacity style={styles.botaoVoltar} onPress={() => router.push('Estudante/cardapio')}>
           <Text style={styles.voltarTexto}>Alterar pedido</Text>
         </TouchableOpacity>
       </View>
@@ -110,22 +106,6 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '600',
     marginBottom: 12,
-  },
-  addressCard: {
-    backgroundColor: '#1A1A1A',
-    padding: 15,
-    borderRadius: 12,
-    borderLeftWidth: 3,
-    borderLeftColor: '#F23064',
-  },
-  addressText: {
-    color: '#FFF',
-    fontSize: 16,
-  },
-  addressSub: {
-    color: '#777',
-    fontSize: 14,
-    marginTop: 4,
   },
   metodoCard: {
     backgroundColor: '#1A1A1A',

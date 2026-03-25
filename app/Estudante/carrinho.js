@@ -3,10 +3,15 @@ import { useRouter } from 'expo-router';
 
 // Exemplo de dados para o carrinho
 const ITENS_CARRINHO = [
-  { id: '1', nome: 'Burger Artesanal Duo', preco: 45.90, qtd: 1 },
-  { id: '2', nome: 'Batata Rústica Grande', preco: 18.00, qtd: 1 },
-  { id: '3', nome: 'Refrigerante Lata 350ml', preco: 7.50, qtd: 2 },
+  { id: '1', nome: 'Coxinha', preco: 5.00, qtd: 1 },
+  { id: '2', nome: 'Coca cola Zero', preco: 4.00, qtd: 1 },
+  { id: '3', nome: 'Água s/ gás', preco: 2.00, qtd: 1 },
 ];
+
+const total = ITENS_CARRINHO.reduce(
+  (acc, item) => acc +item.preco * item.qtd,
+  0
+)
 
 export default function Carrinho() {
   const router = useRouter();
@@ -24,6 +29,7 @@ export default function Carrinho() {
   );
 
   return (
+
     <View style={styles.container}>
       {/* Cabeçalho */}
       <View style={styles.header}>
@@ -42,7 +48,7 @@ export default function Carrinho() {
       <View style={styles.footer}>
         <View style={styles.totalRow}>
           <Text style={styles.totalLabel}>Total:</Text>
-          <Text style={styles.totalValor}>R$ 123.12</Text>
+          <Text style={styles.totalValor}>R$ {total.toFixed(2)}</Text>
         </View>
 
         <TouchableOpacity 

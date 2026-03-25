@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Image, ScrollView } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
  
@@ -79,7 +79,7 @@ export default function Cardapio() {
           </TouchableOpacity>
         </View>
  
-        <View style={styles.itemsContainer}>
+        <ScrollView style={styles.itemsContainer} showsVerticalScrollIndicator = {false}>
           {currentItems.map((item) => (
             <View key={item.id} style={styles.itemCard}>
               <View style={styles.itemInfo}>
@@ -94,7 +94,7 @@ export default function Cardapio() {
               </TouchableOpacity>
             </View>
           ))}
-        </View>
+        </ScrollView>
  
         <TouchableOpacity style={styles.usuario} onPress={() => router.push('/carrinho')}>
           <Text style={styles.botaoTexto}>Ver Carrinho</Text>
@@ -105,21 +105,21 @@ export default function Cardapio() {
 }
  
 const styles = StyleSheet.create({
-  container: { flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: '#1C1C1C' },
-  cardapio: { alignItems: 'center', justifyContent: 'center', backgroundColor: '#262626', borderRadius: 50, padding: 20, width: 320 },
+  container: {flexGrow: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: '#1C1C1C'},
+  cardapio:  { alignItems: 'center', justifyContent: 'center', backgroundColor: '#262626', borderRadius: 50, padding: 4, width: 320 },
   bem_vindo: { fontSize: 24, marginBottom: 20, color: '#fff', fontWeight: 'bold' },
   tabsContainer: { flexDirection: 'row', marginBottom: 20, backgroundColor: '#404040', borderRadius: 25, padding: 4 },
-  tab: { flex: 1, paddingVertical: 8, paddingHorizontal: 16, borderRadius: 20, alignItems: 'center' },
+  tab:       { flex: 1, paddingVertical: 8, paddingHorizontal: 16, borderRadius: 20, alignItems: 'center' },
   activeTab: { backgroundColor: '#F23064' },
-  tabText: { color: '#fff', fontSize: 14, fontWeight: '600' },
+  tabText:   { color: '#fff', fontSize: 14, fontWeight: '600' },
   activeTabText: { color: '#fff' },
-  itemsContainer: { width: 280, marginBottom: 20, maxHeight: 300 },
-  itemCard: { backgroundColor: '#404040', borderRadius: 12, padding: 12, marginBottom: 10, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  itemInfo: { flex: 1 },
-  itemName: { fontSize: 16, fontWeight: 'bold', color: '#fff', marginBottom: 4 },
+  itemsContainer: { width: 280, marginBottom: 20, maxHeight: 230 },
+  itemCard:  { backgroundColor: '#404040', borderRadius: 12, padding: 12, marginBottom: 10, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
+  itemInfo:  { flex: 1 },
+  itemName:  { fontSize: 16, fontWeight: 'bold', color: '#fff', marginBottom: 4 },
   itemPrice: { fontSize: 14, color: '#F23064', fontWeight: 'bold' },
-  addBtn: { backgroundColor: '#F23064', width: 36, height: 36, borderRadius: 18, justifyContent: 'center', alignItems: 'center' },
-  addBtnText: { color: '#fff', fontSize: 20, fontWeight: 'bold', textAlign: 'center' },
-  usuario: { backgroundColor: '#F23064', padding: 14, borderRadius: 12, width: 200, marginTop: 10 },
-  botaoTexto: { color: '#fff', fontSize: 16, fontWeight: '600', textAlign: 'center' },
+  addBtn:    { backgroundColor: '#F23064', width: 36, height: 36, borderRadius: 18, justifyContent: 'center', alignItems: 'center' },
+  addBtnText:{ color: '#fff', fontSize: 20, fontWeight: 'bold', textAlign: 'center' },
+  usuario:   { backgroundColor: '#F23064', padding: 14, borderRadius: 12, width: 200., marginBottom: 10},
+  botaoTexto:{ color: '#fff', fontSize: 16, fontWeight: '600', textAlign: 'center' },
 });

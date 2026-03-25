@@ -32,7 +32,7 @@ export default function pedidos() {
   setPedidos(novosPedidos);
 }
   return (
-    <ScrollView contentContainerStyle={styles.container}>
+    <ScrollView contentContainerStyle={styles.container} showsVerticalScrollIndicator={false}>
       <Text style={styles.titulo}>Pedidos dia 23/03/2026</Text>
  
       <View style={styles.tabsContainer}>
