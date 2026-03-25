@@ -27,12 +27,25 @@ Nosso projeto foi estruturando de maneira que cada integrante seria responsável
 - Pagamento
 - Sair
 
-Os hooks utilizados foram useState, que permite que os botões alterem o estado da interface, e useRoute, que controla movimento entre as telas.
-A navegação foi organizada do seguinte modo:  
+Os hooks utilizados foram:
+
+- useState
+- useRouter
+- Tabs
+- stack
+- Ionicons
+- View
+- TouchableOpacity
+- StyleSheet
+- Image
+- ScrollView
+- Flatlist
+
 
 Pré-requisitos: 
 - Node.js
 - ExpoGo
+- Expo router
 
 Como clonar o projeto:
 
@@ -56,5 +69,15 @@ Demontração:
 Link do vídeo demonstrativo
 https://drive.google.com/file/d/1URXAff2yyXxNUFbnjwHG9uWsHWAWcj0H/view?usp=sharing
 
+
+Para o futuro: 
+
+- Funcionamento correto de cardápio, utilizando de permanencia de dados, passando os mesmos para a área de carrinho e pedidos
+- Introduzir sistema de login com somente um botão
+- Adicionar mais opções de cardápio
+- Adicionar imagens e descrições para o cardápio
+- Adicionar funcionalidades de acessibilidade
+- Funcionamento correto das configurações de temas
+- Adicionar mais opções de configurações
 
 
