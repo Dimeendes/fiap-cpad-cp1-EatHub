@@ -56,13 +56,14 @@ Como clonar o projeto:
 
 Demontração:
 
-<img width="313" height="669" alt="image" src="https://github.com/user-attachments/assets/d4734882-1264-40b6-be22-ff102cbcdabc" />
-<img width="313" height="676" alt="image" src="https://github.com/user-attachments/assets/f8dd23b5-fb7a-4bf4-8508-514d0bcffca2" />
-<img width="309" height="667" alt="image" src="https://github.com/user-attachments/assets/bd7c358d-4ac2-494a-bea4-731266e3dbbd" />
-<img width="307" height="668" alt="image" src="https://github.com/user-attachments/assets/8690f4dc-98a1-4d45-a55f-2e515cbec626" />
-<img width="314" height="673" alt="image" src="https://github.com/user-attachments/assets/79644a78-d5c5-4e1e-987d-4e968d817ac1" />
-<img width="416" height="703" alt="image" src="https://github.com/user-attachments/assets/d31412a2-3f77-424f-a97b-d487b0e8221d" />
-<img width="353" height="744" alt="Captura de tela 2026-03-23 194854" src="https://github.com/user-attachments/assets/c345eeab-7c60-4b2d-84a4-817a3c88c99c" />
+<img width="427" height="962" alt="image" src="https://github.com/user-attachments/assets/6a58ccbd-f6ea-404c-836f-205340f507d1" />
+<img width="426" height="961" alt="image" src="https://github.com/user-attachments/assets/738484cb-b58b-4495-a5d1-99111d36ecd9" />
+<img width="427" height="883" alt="image" src="https://github.com/user-attachments/assets/616ab374-4be6-4947-a0d1-b884a9e8e19a" />
+<img width="430" height="962" alt="image" src="https://github.com/user-attachments/assets/3ee5b96b-b849-4b1a-93f7-1c636578c10e" />
+<img width="422" height="952" alt="image" src="https://github.com/user-attachments/assets/cb9f817e-7007-4dcf-bff0-cf2740df59b8" />
+<img width="422" height="958" alt="image" src="https://github.com/user-attachments/assets/2893c8fa-48a5-41da-8e38-6c501ff19212" />
+<img width="425" height="955" alt="image" src="https://github.com/user-attachments/assets/9c34ac27-d039-4779-962b-f44c7d40add7" />
+<img width="423" height="953" alt="image" src="https://github.com/user-attachments/assets/c04b39b9-97be-468b-9a7c-61922f059b2e" />
 
 
 
@@ -79,5 +80,6 @@ Para o futuro:
 - Adicionar funcionalidades de acessibilidade
 - Funcionamento correto das configurações de temas
 - Adicionar mais opções de configurações
+- Adicionar foma de salvar cartões na hora do pagamento
 
 
