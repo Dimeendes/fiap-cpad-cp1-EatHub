@@ -1,14 +1,34 @@
-import React, { useState } from 'react';
+import {use, useCallback, useEffect, useState} from 'react'
 import { View, Text, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
-import { useRouter } from 'expo-router';
+import { useRouter, useFocusEffect } from 'expo-router';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function Pagamento() {
+  
   const router = useRouter('/pagamento');
   const [metodo, setMetodo] = useState('pix'); // Estado para controlar seleção
-  const subtotal = 11;
+  const [carrinho, setCarrinho] = useState([]);
+
+  useFocusEffect(
+    useCallback(() =>{
+      carregarCarrinho();
+    }, [])
+  );
+  
+  const carregarCarrinho = async() =>{
+    const dados = await AsyncStorage.getItem('carrinho');
+    if(dados) setCarrinho(JSON.parse(dados));
+    console.log(dados);
+  }
+
+  const subTotal = carrinho.reduce(
+  (acc, item) => acc + item.preco * item.qtd,
+  0
+);
+
   const desconto = 0.05
-  const total = metodo === 'pix' ? subtotal * (1-desconto) : subtotal
-  const totalDesconto = subtotal- total
+  const total = metodo === 'pix' ? subTotal * (1-desconto) : subTotal
+  const totalDesconto = subTotal- total
   const corDesconto = totalDesconto > 0.00 ? '#00FF00' : '#ffffff';
   
 
@@ -47,7 +67,7 @@ export default function Pagamento() {
         <View style={styles.resumoContainer}>
           <View style={styles.resumoRow}>
             <Text style={styles.resumoLabel}>Subtotal</Text>
-            <Text style={styles.resumoValor}>R$ {subtotal.toFixed(2)}</Text>
+            <Text style={styles.resumoValor}>R$ {subTotal.toFixed(2)}</Text>
           </View>
           <View style={styles.resumoRow}>
             <Text style={styles.resumoLabel}>Desconto</Text>
@@ -65,13 +85,13 @@ export default function Pagamento() {
       <View style={styles.footer}>
         <TouchableOpacity
           style={styles.botaoConfirmar}
-          onPress={() =>router.push('/cardapio')}
+          onPress={() =>router.push('estudante/cardapio')}
 
         >
           <Text style={styles.botaoTexto}>CONFIRMAR E PAGAR</Text>
         </TouchableOpacity>
         
-        <TouchableOpacity style={styles.botaoVoltar} onPress={() => router.push('Estudante/cardapio')}>
+        <TouchableOpacity style={styles.botaoVoltar} onPress={() => router.push('estudante/carrinho')}>
           <Text style={styles.voltarTexto}>Alterar pedido</Text>
         </TouchableOpacity>
       </View>

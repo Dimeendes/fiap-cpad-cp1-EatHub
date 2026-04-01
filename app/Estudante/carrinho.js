@@ -1,29 +1,60 @@
-import { View, Text, TouchableOpacity, StyleSheet, ScrollView, FlatList } from 'react-native';
-import { useRouter } from 'expo-router';
+import { View, Text, TouchableOpacity, StyleSheet, ScrollView, FlatList, Button } from 'react-native';
+import { useRouter, useFocusEffect } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';
+import {use, useCallback, useEffect, useState} from 'react'
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // Exemplo de dados para o carrinho
-const ITENS_CARRINHO = [
-  { id: '1', nome: 'Coxinha', preco: 5.00, qtd: 1 },
-  { id: '2', nome: 'Coca cola Zero', preco: 4.00, qtd: 1 },
-  { id: '3', nome: 'Água s/ gás', preco: 2.00, qtd: 1 },
-];
 
-const total = ITENS_CARRINHO.reduce(
+export default function Carrinho() {
+  const router = useRouter();
+  const [carrinho, setCarrinho] = useState([]);
+
+  useFocusEffect(
+    useCallback(() =>{
+      carregarCarrinho();
+    }, [])
+  );
+
+
+  const carregarCarrinho = async() =>{
+    const dados = await AsyncStorage.getItem('carrinho');
+    if(dados) setCarrinho(JSON.parse(dados));
+    console.log(dados);
+  }
+  const salvarCarrinho = async(lista) =>{
+    await AsyncStorage.setItem('carrinho', JSON.stringify(lista))
+  }
+
+  const removerItem = async (id) => {
+    setCarrinho((prev) => {
+    const novoCarrinho = prev.filter((item) => item.id !== id);
+    AsyncStorage.setItem('carrinho', JSON.stringify(novoCarrinho))
+
+    return novoCarrinho;
+     });
+  }
+
+  const subtotal = carrinho?.reduce(
   (acc, item) => acc +item.preco * item.qtd,
   0
 )
 
-export default function Carrinho() {
-  const router = useRouter();
-
   const renderItem = ({ item }) => (
     <View style={styles.itemContainer}>
-      <View>
+      <View style={{flex:0.8}}>
         <Text style={styles.itemNome}>{item.nome}</Text>
-        <Text style={styles.itemPreco}>R$ {item.preco.toFixed(2)}</Text>
+        <Text style={styles.itemPreco}>R$ {(item.preco * item.qtd).toFixed(2)}</Text>
       </View>
-      <View style={styles.qtdContainer}>
+
+      <View style={[styles.qtdContainer]}>
         <Text style={styles.qtdTexto}>{item.qtd}x</Text>
+      </View>
+      <View style={styles.cancelContainer}>
+        <TouchableOpacity style={styles.cancelContainer} onPress={() => removerItem(item.id)}>
+          <Ionicons name="close" size={20} color="#F23064" />
+        </TouchableOpacity>
+
       </View>
     </View>
   );
@@ -38,7 +69,7 @@ export default function Carrinho() {
 
       {/* Lista de Itens */}
       <FlatList
-        data={ITENS_CARRINHO}
+        data={carrinho}
         keyExtractor={(item) => item.id}
         renderItem={renderItem}
         contentContainerStyle={styles.listaContext}
@@ -48,7 +79,7 @@ export default function Carrinho() {
       <View style={styles.footer}>
         <View style={styles.totalRow}>
           <Text style={styles.totalLabel}>Total:</Text>
-          <Text style={styles.totalValor}>R$ {total.toFixed(2)}</Text>
+          <Text style={styles.totalValor}>R$ {subtotal.toFixed(2)}</Text>
         </View>
 
         <TouchableOpacity 
@@ -122,6 +153,12 @@ const styles = StyleSheet.create({
     color: '#F23064',
     fontWeight: 'bold',
   },
+  cancelContainer: {
+    backgroundColor: '#333',
+    paddingHorizontal: 4,
+    paddingVertical: 4,
+    borderRadius: 10,
+  },
   footer: {
     backgroundColor: '#121212',
     padding: 25,
@@ -168,4 +205,5 @@ const styles = StyleSheet.create({
     fontSize: 14,
     textDecorationLine: 'underline',
   },
+
 });

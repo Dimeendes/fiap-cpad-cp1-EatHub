@@ -1,55 +1,85 @@
-import { View, Text, TouchableOpacity, StyleSheet, Image, ScrollView } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Image, ScrollView, FlatList, Button } from 'react-native';
 import { useRouter } from 'expo-router';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import carrinhoItem from '../components/carrinhoItem';
+
  
 export default function Cardapio() {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState('comidas');
- 
+  const [carrinho, setCarrinho] = useState([]);
+
   const comidas = [
     {
       id: 1,
       name: 'Coxinha',
-      price: 'R$ 5,00',
+      price: '5.00',
     },
     {
       id: 2,
       name: 'Pão de Batata',
-      price: 'R$ 4,50',
+      price: '4.50',
     },
     {
       id: 3,
       name: 'Esfiha',
-      price: 'R$ 6,00',
+      price: '6.00',
     },
   ];
  
   const bebidas = [
     {
-      id: 1,
-      name: 'Coca Cola Zero',
-      price: 'R$ 4,00',
-    },
-    {
-      id: 2,
-      name: 'Coca Cola Normal',
-      price: 'R$ 4,00',
-    },
-    {
-      id: 3,
-      name: 'Água com Gás',
-      price: 'R$ 2,50',
-    },
-    {
       id: 4,
+      name: 'Coca Cola Zero',
+      price: '4.00',
+    },
+    {
+      id: 5,
+      name: 'Coca Cola Normal',
+      price: '4.00',
+    },
+    {
+      id: 6,
+      name: 'Água com Gás',
+      price: '2.50',
+    },
+    {
+      id: 7,
       name: 'Água sem Gás',
-      price: 'R$ 2,00',
+      price: '2.00',
     },
   ];
- 
-  const handleAddToCart = (item) => {
-    alert(`${item.name} adicionado ao carrinho!`);
-  };
+
+  useEffect(()=>{ carregarCarrinho();}, [])
+
+  const carregarCarrinho = async() =>{
+    const dados = await AsyncStorage.getItem('carrinho');
+    if (dados) setCarrinho(JSON.parse(dados))
+  }
+  const salvarCarrinho = async(lista) =>{
+    await AsyncStorage.setItem('carrinho', JSON.stringify(lista))
+  }
+
+  const adicionarCarrinho = async (item) =>{
+    const dados = await AsyncStorage.getItem('carrinho');
+    const carrinhoAtual = dados ? JSON.parse(dados) : [];
+    const index = carrinhoAtual.findIndex(i => i.id ===item.id.toString());
+    let novoCarrinho;
+    if(index !== -1){
+      novoCarrinho = carrinhoAtual.map((i,idx) =>{
+        if(idx === index){
+          return{...i, qtd: i.qtd + 1}
+        }
+        return i
+      });
+    }else{
+      const novoItem = {id: item.id.toString(), nome: item.name, preco: parseFloat(item.price), qtd: 1};
+    novoCarrinho = [...carrinhoAtual, novoItem];
+  }
+    salvarCarrinho(novoCarrinho)
+    setCarrinho(novoCarrinho);
+  }
  
   const currentItems = activeTab === 'comidas' ? comidas : bebidas;
  
@@ -84,11 +114,11 @@ export default function Cardapio() {
             <View key={item.id} style={styles.itemCard}>
               <View style={styles.itemInfo}>
                 <Text style={styles.itemName}>{item.name}</Text>
-                <Text style={styles.itemPrice}>{item.price}</Text>
+                <Text style={styles.itemPrice}>R$ {item.price}</Text>
               </View>
               <TouchableOpacity
                 style={styles.addBtn}
-                onPress={() => handleAddToCart(item)}
+                onPress={() => adicionarCarrinho(item)}
               >
                 <Text style={styles.addBtnText}>+</Text>
               </TouchableOpacity>
@@ -96,7 +126,7 @@ export default function Cardapio() {
           ))}
         </ScrollView>
  
-        <TouchableOpacity style={styles.usuario} onPress={() => router.push('/carrinho')}>
+        <TouchableOpacity style={styles.usuario} onPress={() => router.push('estudante/carrinho')}>
           <Text style={styles.botaoTexto}>Ver Carrinho</Text>
         </TouchableOpacity>
       </View>
