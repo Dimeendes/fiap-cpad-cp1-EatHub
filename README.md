@@ -40,6 +40,9 @@ Os hooks utilizados foram:
 - Image
 - ScrollView
 - Flatlist
+- Alert
+- createContext
+- useContext
 
 
 Pré-requisitos: 
@@ -56,7 +59,7 @@ Como clonar o projeto:
 
 Demontração:
 
-<img width="427" height="962" alt="image" src="https://github.com/user-attachments/assets/6a58ccbd-f6ea-404c-836f-205340f507d1" />
+<img width="1080" height="2400" alt="image" src="https://github.com/user-attachments/assets/f3d933c1-114f-460a-9d5e-5222632d11bf" />
 <img width="426" height="961" alt="image" src="https://github.com/user-attachments/assets/738484cb-b58b-4495-a5d1-99111d36ecd9" />
 <img width="427" height="883" alt="image" src="https://github.com/user-attachments/assets/616ab374-4be6-4947-a0d1-b884a9e8e19a" />
 <img width="430" height="962" alt="image" src="https://github.com/user-attachments/assets/3ee5b96b-b849-4b1a-93f7-1c636578c10e" />
@@ -74,7 +77,6 @@ https://drive.google.com/file/d/1URXAff2yyXxNUFbnjwHG9uWsHWAWcj0H/view?usp=shari
 Para o futuro: 
 
 - Funcionamento correto de cardápio, utilizando de permanencia de dados, passando os mesmos para a área de carrinho e pedidos
-- Introduzir sistema de login com somente um botão
 - Adicionar mais opções de cardápio
 - Adicionar imagens e descrições para o cardápio
 - Adicionar funcionalidades de acessibilidade
