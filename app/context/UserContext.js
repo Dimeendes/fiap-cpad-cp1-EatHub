@@ -1,52 +1,106 @@
-import { createContext, useState, useContext } from 'react';
+import { createContext, useState, useContext, useEffect } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 const AuthContext = createContext();
 export function AuthProvider({ children }) {
-  const [user, setUser] = useState(null);
-
-    const users = [
+  const [usuarioLogado, setUsuarioLogado] = useState(null);
+ 
+    const [usuarios, setUsuarios] = useState([
         {
-            rm: 'RM562695',
-            nome: 'Diego Antonio Silva Mendes',
+            emailRM: 'rm562695@fiap.com.br',
             senha: '123456',
+            nome: 'Thiago Sobral de Alvarenga',
             tipo: 'usuario'
-        },
+        }
+    ]);
+    const [admins, setAdmins] = useState([
         {
-            rm: 'RM563435',
-            nome: 'Thiago Ono Sakai',
-            senha: '654321',
-            tipo: 'usuario'
-        },
-        {
-            rf: 'RF010119',
-            nome: 'Administrador',
+            emailRF: 'rf010119@fiap.com.br',
             senha: '080507',
+            nome: 'Admin 1',
             tipo: 'admin'
         }
-    ];
-
-    function login(codigoDigitado, senhaDigitada) {
-        const encontrado = users.find((u) => {
-            if (u.tipo === 'usuario') {
-                return u.rm === codigoDigitado && u.senha === senhaDigitada;
-            } else {
-                return u.rf === codigoDigitado && u.senha === senhaDigitada;
+    ]);
+ 
+    useEffect(() => {
+        carregarUsuario();
+    }, []);
+ 
+    async function carregarUsuario() {
+        try {
+            const usuarioJson = await AsyncStorage.getItem('usuarioLogado');
+            if (usuarioJson) {
+                setUsuarioLogado(JSON.parse(usuarioJson));
             }
-        });
-
-        if (encontrado) {
-            setUser(encontrado);
-            return encontrado.tipo;
-        } else {
-            return null;
+        } catch (error) {
+            console.error('Erro ao carregar usuário:', error);
         }
     }
-
+ 
+    async function salvarUsuario(usuario) {
+        try {
+            await AsyncStorage.setItem('usuarioLogado', JSON.stringify(usuario));
+        } catch (error) {
+            console.error('Erro ao salvar usuário:', error);
+        }
+    }
+ 
+    async function cadastrarUsuario(nome, emailRM, senha) {
+        const novoUsuario = {
+            emailRM: emailRM,
+            senha: senha,
+            nome: nome,
+            tipo: 'usuario'
+        };
+ 
+        const novaLista = ([...usuarios, novoUsuario]);
+ 
+        setUsuarios(novaLista);
+        await AsyncStorage.setItem('usuarios', JSON.stringify(novaLista));
+    }
+ 
+    function login(emailDigitado, senhaDigitada) {
+        const emailNormalizado = emailDigitado.trim().toLowerCase();
+ 
+        const adminEncontrado = admins.find(
+            (admin) => admin.emailRF?.trim().toLowerCase() === emailNormalizado && admin.senha === senhaDigitada
+        );
+ 
+        if (adminEncontrado) {
+            setUsuarioLogado(adminEncontrado);
+            salvarUsuario(adminEncontrado);
+            return 'admin';
+        }
+ 
+        const usuarioEncontrado = usuarios.find(
+            (usuario) =>
+                (usuario.emailRM?.trim().toLowerCase() === emailNormalizado ||
+                 usuario.email?.trim().toLowerCase() === emailNormalizado) &&
+                usuario.senha === senhaDigitada
+        );
+ 
+        if (usuarioEncontrado) {
+            setUsuarioLogado(usuarioEncontrado);
+            salvarUsuario(usuarioEncontrado);
+            return 'usuario';
+        }
+ 
+        return null;
+    }
+ 
     function logout() {
-        setUser(null);
+        setUsuarioLogado(null);
+        AsyncStorage.removeItem('usuarioLogado');
 }
-
+ 
     return (
-        <AuthContext.Provider value={{ user, login, logout }}>
+        <AuthContext.Provider
+        value={{
+            usuarioLogado,
+            cadastrarUsuario,
+            login,
+            logout
+            }}
+        >
           {children}
         </AuthContext.Provider>
     );
@@ -54,5 +108,5 @@ export function AuthProvider({ children }) {
 export function useUser() {
   return useContext(AuthContext);
 }
-
+ 
 export default AuthProvider;
