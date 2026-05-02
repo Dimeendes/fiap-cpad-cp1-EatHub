@@ -1,40 +1,89 @@
-import {use, useCallback, useEffect, useState} from 'react'
-import { View, Text, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
+import { useCallback, useState } from 'react';
+import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Alert } from 'react-native';
 import { useRouter, useFocusEffect } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useUser } from './context/UserContext';
 
 export default function Pagamento() {
-  
-  const router = useRouter('/pagamento');
-  const [metodo, setMetodo] = useState('pix'); // Estado para controlar seleção
+  const router = useRouter();
+  const { user } = useUser();
+  const [metodo, setMetodo] = useState('pix');
   const [carrinho, setCarrinho] = useState([]);
+  const [cartaoSalvo, setCartaoSalvo] = useState(null);
 
   useFocusEffect(
-    useCallback(() =>{
-      carregarCarrinho();
+    useCallback(() => {
+      carregarDados();
     }, [])
   );
-  
-  const carregarCarrinho = async() =>{
-    const dados = await AsyncStorage.getItem('carrinho');
-    if(dados) setCarrinho(JSON.parse(dados));
-    console.log(dados);
-  }
 
-  const subTotal = carrinho.reduce(
-  (acc, item) => acc + item.preco * item.qtd,
-  0
-);
+  const carregarDados = async () => {
+    const dadosCarrinho = await AsyncStorage.getItem('carrinho');
+    if (dadosCarrinho) setCarrinho(JSON.parse(dadosCarrinho));
 
-  const desconto = 0.05
-  const total = metodo === 'pix' ? subTotal * (1-desconto) : subTotal
-  const totalDesconto = subTotal- total
-  const corDesconto = totalDesconto > 0.00 ? '#00FF00' : '#ffffff';
-  
+    const dadosCartao = await AsyncStorage.getItem('cartao');
+    if (dadosCartao) setCartaoSalvo(JSON.parse(dadosCartao));
+    else setCartaoSalvo(null);
+  };
+
+  const subTotal = carrinho.reduce((acc, item) => acc + item.preco * item.qtd, 0);
+  const desconto = 0.05;
+  const total = metodo === 'pix' ? subTotal * (1 - desconto) : subTotal;
+  const totalDesconto = subTotal - total;
+  const corDesconto = totalDesconto > 0 ? '#00FF00' : '#ffffff';
+
+  const confirmarPedido = async () => {
+    if (metodo === 'cartao' && !cartaoSalvo) {
+      Alert.alert(
+        'Cartão não cadastrado',
+        'Você precisa adicionar um cartão de crédito para usar este método de pagamento.',
+        [
+          { text: 'Adicionar cartão', onPress: () => router.push('/adicionarCartao') },
+          { text: 'Cancelar', style: 'cancel' },
+        ]
+      );
+      return;
+    }
+
+    if (carrinho.length === 0) {
+      Alert.alert('Carrinho vazio', 'Adicione itens ao carrinho antes de confirmar.');
+      return;
+    }
+
+    const agora = new Date();
+    const horario = agora.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+    const data = agora.toLocaleDateString('pt-BR');
+
+    const novoPedido = {
+      id: Date.now(),
+      nome: user?.nome || user?.rm || 'Estudante',
+      rm: user?.rm || '',
+      status: 'preparando',
+      carrinho: carrinho,
+      carrinhoTexto: carrinho.map(i => `${i.qtd}x ${i.nome}`).join('\n'),
+      total: total,
+      horario,
+      data,
+      metodoPagamento: metodo,
+    };
+
+    const pedidosExistentes = await AsyncStorage.getItem('pedidos');
+    const lista = pedidosExistentes ? JSON.parse(pedidosExistentes) : [];
+    lista.push(novoPedido);
+    await AsyncStorage.setItem('pedidos', JSON.stringify(lista));
+
+    await AsyncStorage.removeItem('carrinho');
+
+    Alert.alert(
+      'Pedido confirmado! 🎉',
+      `Seu pedido foi enviado para a cozinha.\nTotal: R$ ${total.toFixed(2)}`,
+      [{ text: 'OK', onPress: () => router.push('estudante/cardapio') }]
+    );
+  };
 
   const MetodoItem = ({ id, titulo, icon }) => (
-    <TouchableOpacity 
-      style={[styles.metodoCard, metodo === id && styles.metodoSelecionado]} 
+    <TouchableOpacity
+      style={[styles.metodoCard, metodo === id && styles.metodoSelecionado]}
       onPress={() => setMetodo(id)}
     >
       <Text style={[styles.metodoTexto, metodo === id && styles.metodoTextoAtivo]}>
@@ -46,10 +95,12 @@ export default function Pagamento() {
     </TouchableOpacity>
   );
 
+  const ultimosQuatro = cartaoSalvo?.numero?.replace(/\s/g, '').slice(-4);
+
   return (
     <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContent}>
-        
+
         {/* Cabeçalho */}
         <View style={styles.header}>
           <Text style={styles.headerTitle}>Pagamento</Text>
@@ -58,11 +109,48 @@ export default function Pagamento() {
         {/* Métodos de Pagamento */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Escolha o método:</Text>
-          
+
           <MetodoItem id="pix" titulo="PIX (Desconto de 5%)" icon="⚡" />
           <MetodoItem id="cartao" titulo="Cartão de Crédito" icon="💳" />
           <MetodoItem id="dinheiro" titulo="Dinheiro / Maquininha" icon="💵" />
         </View>
+
+        {/* Seção do Cartão */}
+        {metodo === 'cartao' && (
+          <View style={styles.cartaoSection}>
+            {cartaoSalvo ? (
+              <View style={styles.cartaoSalvoContainer}>
+                <View style={styles.cartaoSalvoInfo}>
+                  <Text style={styles.cartaoSalvoIcone}>💳</Text>
+                  <View>
+                    <Text style={styles.cartaoSalvoNome}>{cartaoSalvo.nome}</Text>
+                    <Text style={styles.cartaoSalvoNumero}>**** **** **** {ultimosQuatro}</Text>
+                    <Text style={styles.cartaoSalvoValidade}>Validade: {cartaoSalvo.validade}</Text>
+                  </View>
+                </View>
+                <TouchableOpacity
+                  style={styles.botaoTrocar}
+                  onPress={() => router.push('/adicionarCartao')}
+                >
+                  <Text style={styles.botaoTrocarTexto}>Trocar</Text>
+                </TouchableOpacity>
+              </View>
+            ) : (
+              <View style={styles.semCartaoContainer}>
+                <Text style={styles.semCartaoTexto}>
+                  ⚠️  Nenhum cartão cadastrado
+                </Text>
+                <TouchableOpacity
+                  style={styles.botaoAdicionarCartao}
+                  onPress={() => router.push('/adicionarCartao')}
+                >
+                  <Text style={styles.botaoAdicionarTexto}>+ Adicionar cartão</Text>
+                </TouchableOpacity>
+              </View>
+            )}
+          </View>
+        )}
+
         {/* Resumo de Valores */}
         <View style={styles.resumoContainer}>
           <View style={styles.resumoRow}>
@@ -71,7 +159,9 @@ export default function Pagamento() {
           </View>
           <View style={styles.resumoRow}>
             <Text style={styles.resumoLabel}>Desconto</Text>
-            <Text style={[styles.resumoValor, {color: corDesconto}]}>- R$ {(totalDesconto).toFixed(2)}</Text> 
+            <Text style={[styles.resumoValor, { color: corDesconto }]}>
+              - R$ {totalDesconto.toFixed(2)}
+            </Text>
           </View>
           <View style={[styles.resumoRow, styles.totalDestaque]}>
             <Text style={styles.totalLabel}>TOTAL</Text>
@@ -84,13 +174,21 @@ export default function Pagamento() {
       {/* Footer com Botão Fixo */}
       <View style={styles.footer}>
         <TouchableOpacity
-          style={styles.botaoConfirmar}
-          onPress={() =>router.push('estudante/cardapio')}
-
+          style={[
+            styles.botaoConfirmar,
+            metodo === 'cartao' && !cartaoSalvo && styles.botaoDesabilitado,
+          ]}
+          onPress={confirmarPedido}
         >
           <Text style={styles.botaoTexto}>CONFIRMAR E PAGAR</Text>
         </TouchableOpacity>
-        
+
+        {metodo === 'cartao' && !cartaoSalvo && (
+          <Text style={styles.avisoCartao}>
+            Adicione um cartão para continuar com este método
+          </Text>
+        )}
+
         <TouchableOpacity style={styles.botaoVoltar} onPress={() => router.push('estudante/carrinho')}>
           <Text style={styles.voltarTexto}>Alterar pedido</Text>
         </TouchableOpacity>
@@ -107,7 +205,7 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     paddingHorizontal: 20,
-    paddingBottom: 150, // Espaço para não cobrir o botão fixo
+    paddingBottom: 180,
   },
   header: {
     marginBottom: 25,
@@ -119,7 +217,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   section: {
-    marginBottom: 25,
+    marginBottom: 20,
   },
   sectionTitle: {
     color: '#FFF',
@@ -168,6 +266,79 @@ const styles = StyleSheet.create({
     borderRadius: 6,
     backgroundColor: '#F23064',
   },
+  cartaoSection: {
+    marginBottom: 20,
+  },
+  cartaoSalvoContainer: {
+    backgroundColor: '#1A1A2E',
+    borderRadius: 12,
+    padding: 16,
+    borderWidth: 1,
+    borderColor: '#F23064',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  cartaoSalvoInfo: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  cartaoSalvoIcone: {
+    fontSize: 32,
+    marginRight: 12,
+  },
+  cartaoSalvoNome: {
+    color: '#fff',
+    fontWeight: 'bold',
+    fontSize: 14,
+  },
+  cartaoSalvoNumero: {
+    color: '#AAA',
+    fontSize: 13,
+    marginTop: 2,
+  },
+  cartaoSalvoValidade: {
+    color: '#777',
+    fontSize: 12,
+    marginTop: 2,
+  },
+  botaoTrocar: {
+    backgroundColor: '#333',
+    paddingVertical: 8,
+    paddingHorizontal: 14,
+    borderRadius: 8,
+  },
+  botaoTrocarTexto: {
+    color: '#F23064',
+    fontWeight: 'bold',
+    fontSize: 13,
+  },
+  semCartaoContainer: {
+    backgroundColor: '#1A0000',
+    borderRadius: 12,
+    padding: 16,
+    borderWidth: 1,
+    borderColor: '#5a0000',
+    alignItems: 'center',
+    gap: 12,
+  },
+  semCartaoTexto: {
+    color: '#FF6B6B',
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  botaoAdicionarCartao: {
+    backgroundColor: '#F23064',
+    paddingVertical: 10,
+    paddingHorizontal: 24,
+    borderRadius: 10,
+  },
+  botaoAdicionarTexto: {
+    color: '#fff',
+    fontWeight: 'bold',
+    fontSize: 14,
+  },
   resumoContainer: {
     marginTop: 10,
     paddingTop: 20,
@@ -215,6 +386,16 @@ const styles = StyleSheet.create({
     paddingVertical: 18,
     borderRadius: 15,
     alignItems: 'center',
+  },
+  botaoDesabilitado: {
+    backgroundColor: '#5a0000',
+    opacity: 0.6,
+  },
+  avisoCartao: {
+    color: '#FF6B6B',
+    fontSize: 12,
+    textAlign: 'center',
+    marginTop: 8,
   },
   botaoTexto: {
     color: '#FFF',

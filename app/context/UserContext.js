@@ -6,16 +6,19 @@ export function AuthProvider({ children }) {
     const users = [
         {
             rm: 'RM562695',
+            nome: 'Diego Antonio Silva Mendes',
             senha: '123456',
             tipo: 'usuario'
         },
         {
             rm: 'RM563435',
+            nome: 'Thiago Ono Sakai',
             senha: '654321',
             tipo: 'usuario'
         },
         {
             rf: 'RF010119',
+            nome: 'Administrador',
             senha: '080507',
             tipo: 'admin'
         }
