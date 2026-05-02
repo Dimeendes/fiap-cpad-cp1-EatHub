@@ -67,18 +67,30 @@ export default function Pagamento() {
       metodoPagamento: metodo,
     };
 
-    const pedidosExistentes = await AsyncStorage.getItem('pedidos');
-    const lista = pedidosExistentes ? JSON.parse(pedidosExistentes) : [];
-    lista.push(novoPedido);
-    await AsyncStorage.setItem('pedidos', JSON.stringify(lista));
+    try {
+      const pedidosExistentes = await AsyncStorage.getItem('pedidos');
+      const lista = pedidosExistentes ? JSON.parse(pedidosExistentes) : [];
+      lista.push(novoPedido);
+      await AsyncStorage.setItem('pedidos', JSON.stringify(lista));
 
-    await AsyncStorage.removeItem('carrinho');
+      await AsyncStorage.removeItem('carrinho');
+      setCarrinho([]);
 
-    Alert.alert(
-      'Pedido confirmado! 🎉',
-      `Seu pedido foi enviado para a cozinha.\nTotal: R$ ${total.toFixed(2)}`,
-      [{ text: 'OK', onPress: () => router.push('estudante/cardapio') }]
-    );
+      await AsyncStorage.setItem(
+        'aviso_pedido_enviado',
+        JSON.stringify({
+          titulo: 'Pedido enviado!',
+          texto: `Seu pedido foi enviado para a cozinha. Total: R$ ${total.toFixed(2)}`,
+        })
+      );
+
+      router.replace('/Estudante/cardapio');
+    } catch (e) {
+      Alert.alert(
+        'Erro ao finalizar',
+        'Não foi possível salvar o pedido. Tente novamente.'
+      );
+    }
   };
 
   const MetodoItem = ({ id, titulo, icon }) => (
@@ -189,7 +201,7 @@ export default function Pagamento() {
           </Text>
         )}
 
-        <TouchableOpacity style={styles.botaoVoltar} onPress={() => router.push('estudante/carrinho')}>
+        <TouchableOpacity style={styles.botaoVoltar} onPress={() => router.push('/Estudante/carrinho')}>
           <Text style={styles.voltarTexto}>Alterar pedido</Text>
         </TouchableOpacity>
       </View>

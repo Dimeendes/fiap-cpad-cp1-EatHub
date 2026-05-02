@@ -1,14 +1,15 @@
-import { View, Text, TouchableOpacity, StyleSheet, Image, ScrollView, FlatList, Button } from 'react-native';
-import { useRouter } from 'expo-router';
-import { useState, useEffect } from 'react';
+import { View, Text, TouchableOpacity, StyleSheet, Image, ScrollView } from 'react-native';
+import { useRouter, useFocusEffect } from 'expo-router';
+import { useState, useCallback } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import carrinhoItem from '../components/carrinhoItem';
-
  
+const AVISO_PEDIDO_KEY = 'aviso_pedido_enviado';
+
 export default function Cardapio() {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState('comidas');
   const [carrinho, setCarrinho] = useState([]);
+  const [avisoPedido, setAvisoPedido] = useState(null);
 
   const comidas = [
     {
@@ -51,12 +52,37 @@ export default function Cardapio() {
     },
   ];
 
-  useEffect(()=>{ carregarCarrinho();}, [])
-
-  const carregarCarrinho = async() =>{
+  const carregarCarrinho = async () => {
     const dados = await AsyncStorage.getItem('carrinho');
-    if (dados) setCarrinho(JSON.parse(dados))
-  }
+    if (dados) setCarrinho(JSON.parse(dados));
+    else setCarrinho([]);
+  };
+
+  useFocusEffect(
+    useCallback(() => {
+      let ativo = true;
+      (async () => {
+        await carregarCarrinho();
+        const raw = await AsyncStorage.getItem(AVISO_PEDIDO_KEY);
+        if (!raw || !ativo) return;
+        try {
+          const data = JSON.parse(raw);
+          if (ativo) setAvisoPedido(data);
+        } catch {
+          if (ativo) {
+            setAvisoPedido({
+              titulo: 'Pedido enviado!',
+              texto: 'Seu pedido foi enviado para a cozinha.',
+            });
+          }
+        }
+        await AsyncStorage.removeItem(AVISO_PEDIDO_KEY);
+      })();
+      return () => {
+        ativo = false;
+      };
+    }, [])
+  );
   const salvarCarrinho = async(lista) =>{
     await AsyncStorage.setItem('carrinho', JSON.stringify(lista))
   }
@@ -90,7 +116,20 @@ export default function Cardapio() {
           source={require('../../assets/EatHub.png')}
           style={{ width: 100, height: 100, marginBottom: 20 }}
         />
- 
+
+        {avisoPedido && (
+          <View style={styles.avisoBox}>
+            <Text style={styles.avisoTitulo}>{avisoPedido.titulo}</Text>
+            <Text style={styles.avisoTexto}>{avisoPedido.texto}</Text>
+            <TouchableOpacity
+              style={styles.avisoFechar}
+              onPress={() => setAvisoPedido(null)}
+            >
+              <Text style={styles.avisoFecharTexto}>Entendi</Text>
+            </TouchableOpacity>
+          </View>
+        )}
+
         <Text style={styles.bem_vindo}>Cardápio</Text>
  
         {/* Abas */}
@@ -152,4 +191,38 @@ const styles = StyleSheet.create({
   addBtnText:{ color: '#fff', fontSize: 20, fontWeight: 'bold', textAlign: 'center' },
   usuario:   { backgroundColor: '#F23064', padding: 14, borderRadius: 12, width: 200., marginBottom: 10},
   botaoTexto:{ color: '#fff', fontSize: 16, fontWeight: '600', textAlign: 'center' },
+  avisoBox: {
+    backgroundColor: '#1a3d2e',
+    borderWidth: 1,
+    borderColor: '#2ecc71',
+    borderRadius: 14,
+    padding: 14,
+    marginBottom: 16,
+    width: '100%',
+    maxWidth: 300,
+  },
+  avisoTitulo: {
+    color: '#2ecc71',
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginBottom: 6,
+  },
+  avisoTexto: {
+    color: '#e8f8ef',
+    fontSize: 14,
+    lineHeight: 20,
+  },
+  avisoFechar: {
+    marginTop: 12,
+    alignSelf: 'flex-end',
+    backgroundColor: '#F23064',
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderRadius: 8,
+  },
+  avisoFecharTexto: {
+    color: '#fff',
+    fontWeight: '600',
+    fontSize: 13,
+  },
 });
