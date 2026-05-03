@@ -134,7 +134,7 @@ export default function Cardapio() {
           ))}
         </ScrollView>
  
-        <TouchableOpacity style={styles.usuario} onPress={() => router.push('estudante/carrinho')}>
+        <TouchableOpacity style={styles.usuario} onPress={() => router.push('/Estudante/carrinho')}>
           <Text style={styles.botaoTexto}>Ver Carrinho</Text>
         </TouchableOpacity>
       </View>

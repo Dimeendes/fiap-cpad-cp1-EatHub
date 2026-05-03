@@ -7,7 +7,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 // Exemplo de dados para o carrinho
 
 export default function Carrinho() {
-  const router = useRouter('/Estudante/carrinho');
+  const router = useRouter();
   const [carrinho, setCarrinho] = useState([]);
 
   useFocusEffect(
