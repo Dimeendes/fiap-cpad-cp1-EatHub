@@ -1,12 +1,21 @@
 {
   "expo": {
+<<<<<<< HEAD
     "name": "app-cantina",
     "slug": "app-cantina",
+=======
+    "name": "Checkpoint-1",
+    "slug": "Checkpoint-1",
+    "scheme": "Checkpoint-1",
+>>>>>>> c554fb1a003de650a6aa42d32e698b1b1479542b
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
+<<<<<<< HEAD
     "newArchEnabled": true,
+=======
+>>>>>>> c554fb1a003de650a6aa42d32e698b1b1479542b
     "splash": {
       "image": "./assets/splash-icon.png",
       "resizeMode": "contain",
@@ -17,6 +26,7 @@
     },
     "android": {
       "adaptiveIcon": {
+<<<<<<< HEAD
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
@@ -25,5 +35,19 @@
     "web": {
       "favicon": "./assets/favicon.png"
     }
+=======
+        "backgroundColor": "#E6F4FE",
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "backgroundImage": "./assets/android-icon-background.png",
+        "monochromeImage": "./assets/android-icon-monochrome.png"
+      }
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      "expo-router"
+    ]
+>>>>>>> c554fb1a003de650a6aa42d32e698b1b1479542b
   }
 }
