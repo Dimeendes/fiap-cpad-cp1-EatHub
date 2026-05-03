@@ -89,6 +89,10 @@ Os hooks utilizados foram:
 - Alert
 - createContext
 - useContext
+- useTheme
+
+Context criado:
+- Theme context, que gerencia o tema global do app(claro, escuro, normal)
 
 Telas do fluxo estudante / funcionário (anexos do repositório):
 
@@ -98,6 +102,12 @@ Pré-requisitos:
 - Expo router
 
 ---
+
+## Diferencial implementado
+
+Escolha de temas pelo usuário em todo o app (claro, escuro e normal), alinhada à estética da FIAP. O diferencial evoluiu desde a primeira entrega com estado global.
+
+Foi criado um **ThemeContext** com três temas (cada um com cor primária e de fundo), inicializado no tema normal. O hook **useTheme()** mantém a alteração de tema consistente entre as telas.
 
 Demontração:
 
