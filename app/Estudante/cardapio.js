@@ -1,12 +1,13 @@
-import { View, Text, TouchableOpacity, StyleSheet, Image, ScrollView, FlatList, Button } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Image, ScrollView } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useState, useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import carrinhoItem from '../components/carrinhoItem';
+import { useTheme } from '../context/ThemeContext';
 
  
 export default function Cardapio() {
   const router = useRouter();
+  const { tema } = useTheme();
   const [activeTab, setActiveTab] = useState('comidas');
   const [carrinho, setCarrinho] = useState([]);
 
@@ -91,41 +92,57 @@ export default function Cardapio() {
   const currentItems = activeTab === 'comidas' ? comidas : bebidas;
  
   return (
-    <View style={styles.container}>
-      <View style={styles.cardapio}>
+    <View style={[styles.container, { backgroundColor: tema.fundo }]}>
+      <View style={[styles.cardapio, { backgroundColor: tema.card }]}>
         <Image
           source={require('../../assets/EatHub.png')}
           style={{ width: 100, height: 100, marginBottom: 20 }}
         />
  
-        <Text style={styles.bem_vindo}>Cardápio</Text>
+        <Text style={[styles.bem_vindo, { color: tema.texto }]}>Cardápio</Text>
  
         {/* Abas */}
-        <View style={styles.tabsContainer}>
+        <View style={[styles.tabsContainer, { backgroundColor: tema.fundo }]}>
           <TouchableOpacity
-            style={[styles.tab, activeTab === 'comidas' && styles.activeTab]}
+            style={[styles.tab, activeTab === 'comidas' && { backgroundColor: tema.primaria }]}
             onPress={() => setActiveTab('comidas')}
           >
-            <Text style={[styles.tabText, activeTab === 'comidas' && styles.activeTabText]}>Comidas</Text>
+            <Text
+              style={[
+                styles.tabText,
+                { color: activeTab === 'comidas' ? '#fff' : tema.texto },
+                activeTab === 'comidas' && styles.activeTabText,
+              ]}
+            >
+              Comidas
+            </Text>
           </TouchableOpacity>
           <TouchableOpacity
-            style={[styles.tab, activeTab === 'bebidas' && styles.activeTab]}
+            style={[styles.tab, activeTab === 'bebidas' && { backgroundColor: tema.primaria }]}
             onPress={() => setActiveTab('bebidas')}
           >
-            <Text style={[styles.tabText, activeTab === 'bebidas' && styles.activeTabText]}>Bebidas</Text>
+            <Text
+              style={[
+                styles.tabText,
+                { color: activeTab === 'bebidas' ? '#fff' : tema.texto },
+                activeTab === 'bebidas' && styles.activeTabText,
+              ]}
+            >
+              Bebidas
+            </Text>
           </TouchableOpacity>
         </View>
  
         <ScrollView style={styles.itemsContainer} showsVerticalScrollIndicator = {false}>
           {currentItems.map((item) => (
-            <View key={item.id} style={styles.itemCard}>
+            <View key={item.id} style={[styles.itemCard, { backgroundColor: tema.fundo }]}>
               <Image source={item.image} style={styles.itemImage} />
               <View style={styles.itemInfo}>
-                <Text style={styles.itemName}>{item.name}</Text>
-                <Text style={styles.itemPrice}>R$ {item.price}</Text>
+                <Text style={[styles.itemName, { color: tema.texto }]}>{item.name}</Text>
+                <Text style={[styles.itemPrice, { color: tema.primaria }]}>R$ {item.price}</Text>
               </View>
               <TouchableOpacity
-                style={styles.addBtn}
+                style={[styles.addBtn, { backgroundColor: tema.primaria }]}
                 onPress={() => adicionarCarrinho(item)}
               >
                 <Text style={styles.addBtnText}>+</Text>
@@ -134,7 +151,10 @@ export default function Cardapio() {
           ))}
         </ScrollView>
  
-        <TouchableOpacity style={styles.usuario} onPress={() => router.push('estudante/carrinho')}>
+        <TouchableOpacity
+          style={[styles.usuario, { backgroundColor: tema.primaria }]}
+          onPress={() => router.push('/Estudante/carrinho')}
+        >
           <Text style={styles.botaoTexto}>Ver Carrinho</Text>
         </TouchableOpacity>
       </View>

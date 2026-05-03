@@ -3,10 +3,12 @@ import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Alert } from 'rea
 import { useRouter, useFocusEffect } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useUser } from './context/UserContext';
+import { useTheme } from './context/ThemeContext';
 
 export default function Pagamento() {
   const router = useRouter();
-  const { user } = useUser();
+  const { usuarioLogado } = useUser();
+  const { tema } = useTheme();
   const [metodo, setMetodo] = useState('pix');
   const [carrinho, setCarrinho] = useState([]);
   const [cartaoSalvo, setCartaoSalvo] = useState(null);
@@ -56,8 +58,8 @@ export default function Pagamento() {
 
     const novoPedido = {
       id: Date.now(),
-      nome: user?.nome || user?.rm || 'Estudante',
-      rm: user?.rm || '',
+      nome: usuarioLogado?.nome || usuarioLogado?.rm || 'Estudante',
+      rm: usuarioLogado?.rm || '',
       status: 'preparando',
       carrinho: carrinho,
       carrinhoTexto: carrinho.map(i => `${i.qtd}x ${i.nome}`).join('\n'),
@@ -95,14 +97,30 @@ export default function Pagamento() {
 
   const MetodoItem = ({ id, titulo, icon }) => (
     <TouchableOpacity
-      style={[styles.metodoCard, metodo === id && styles.metodoSelecionado]}
+      style={[
+        styles.metodoCard,
+        { backgroundColor: tema.card, borderColor: tema.borda },
+        metodo === id && { borderColor: tema.primaria, backgroundColor: tema.fundo },
+      ]}
       onPress={() => setMetodo(id)}
     >
-      <Text style={[styles.metodoTexto, metodo === id && styles.metodoTextoAtivo]}>
+      <Text
+        style={[
+          styles.metodoTexto,
+          { color: tema.textoSecundario },
+          metodo === id && [styles.metodoTextoAtivo, { color: tema.texto }],
+        ]}
+      >
         {icon}  {titulo}
       </Text>
-      <View style={[styles.radioOuter, metodo === id && styles.radioOuterAtivo]}>
-        {metodo === id && <View style={styles.radioInner} />}
+      <View
+        style={[
+          styles.radioOuter,
+          { borderColor: tema.borda },
+          metodo === id && { borderColor: tema.primaria },
+        ]}
+      >
+        {metodo === id && <View style={[styles.radioInner, { backgroundColor: tema.primaria }]} />}
       </View>
     </TouchableOpacity>
   );
@@ -110,17 +128,17 @@ export default function Pagamento() {
   const ultimosQuatro = cartaoSalvo?.numero?.replace(/\s/g, '').slice(-4);
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: tema.fundo }]}>
       <ScrollView contentContainerStyle={styles.scrollContent}>
 
         {/* Cabeçalho */}
         <View style={styles.header}>
-          <Text style={styles.headerTitle}>Pagamento</Text>
+          <Text style={[styles.headerTitle, { color: tema.primaria }]}>Pagamento</Text>
         </View>
 
         {/* Métodos de Pagamento */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Escolha o método:</Text>
+          <Text style={[styles.sectionTitle, { color: tema.texto }]}>Escolha o método:</Text>
 
           <MetodoItem id="pix" titulo="PIX (Desconto de 5%)" icon="⚡" />
           <MetodoItem id="cartao" titulo="Cartão de Crédito" icon="💳" />
@@ -131,29 +149,29 @@ export default function Pagamento() {
         {metodo === 'cartao' && (
           <View style={styles.cartaoSection}>
             {cartaoSalvo ? (
-              <View style={styles.cartaoSalvoContainer}>
+              <View style={[styles.cartaoSalvoContainer, { backgroundColor: tema.card, borderColor: tema.primaria }]}>
                 <View style={styles.cartaoSalvoInfo}>
                   <Text style={styles.cartaoSalvoIcone}>💳</Text>
                   <View>
-                    <Text style={styles.cartaoSalvoNome}>{cartaoSalvo.nome}</Text>
-                    <Text style={styles.cartaoSalvoNumero}>**** **** **** {ultimosQuatro}</Text>
-                    <Text style={styles.cartaoSalvoValidade}>Validade: {cartaoSalvo.validade}</Text>
+                    <Text style={[styles.cartaoSalvoNome, { color: tema.texto }]}>{cartaoSalvo.nome}</Text>
+                    <Text style={[styles.cartaoSalvoNumero, { color: tema.textoSecundario }]}>**** **** **** {ultimosQuatro}</Text>
+                    <Text style={[styles.cartaoSalvoValidade, { color: tema.textoSecundario }]}>Validade: {cartaoSalvo.validade}</Text>
                   </View>
                 </View>
                 <TouchableOpacity
-                  style={styles.botaoTrocar}
+                  style={[styles.botaoTrocar, { backgroundColor: tema.fundo }]}
                   onPress={() => router.push('/adicionarCartao')}
                 >
-                  <Text style={styles.botaoTrocarTexto}>Trocar</Text>
+                  <Text style={[styles.botaoTrocarTexto, { color: tema.primaria }]}>Trocar</Text>
                 </TouchableOpacity>
               </View>
             ) : (
-              <View style={styles.semCartaoContainer}>
+              <View style={[styles.semCartaoContainer, { backgroundColor: tema.card, borderColor: tema.borda }]}>
                 <Text style={styles.semCartaoTexto}>
                   ⚠️  Nenhum cartão cadastrado
                 </Text>
                 <TouchableOpacity
-                  style={styles.botaoAdicionarCartao}
+                  style={[styles.botaoAdicionarCartao, { backgroundColor: tema.primaria }]}
                   onPress={() => router.push('/adicionarCartao')}
                 >
                   <Text style={styles.botaoAdicionarTexto}>+ Adicionar cartão</Text>
@@ -164,30 +182,31 @@ export default function Pagamento() {
         )}
 
         {/* Resumo de Valores */}
-        <View style={styles.resumoContainer}>
+        <View style={[styles.resumoContainer, { borderTopColor: tema.borda }]}>
           <View style={styles.resumoRow}>
-            <Text style={styles.resumoLabel}>Subtotal</Text>
-            <Text style={styles.resumoValor}>R$ {subTotal.toFixed(2)}</Text>
+            <Text style={[styles.resumoLabel, { color: tema.textoSecundario }]}>Subtotal</Text>
+            <Text style={[styles.resumoValor, { color: tema.texto }]}>R$ {subTotal.toFixed(2)}</Text>
           </View>
           <View style={styles.resumoRow}>
-            <Text style={styles.resumoLabel}>Desconto</Text>
+            <Text style={[styles.resumoLabel, { color: tema.textoSecundario }]}>Desconto</Text>
             <Text style={[styles.resumoValor, { color: corDesconto }]}>
               - R$ {totalDesconto.toFixed(2)}
             </Text>
           </View>
           <View style={[styles.resumoRow, styles.totalDestaque]}>
-            <Text style={styles.totalLabel}>TOTAL</Text>
-            <Text style={styles.totalValor}>R$ {total.toFixed(2)}</Text>
+            <Text style={[styles.totalLabel, { color: tema.texto }]}>TOTAL</Text>
+            <Text style={[styles.totalValor, { color: tema.primaria }]}>R$ {total.toFixed(2)}</Text>
           </View>
         </View>
 
       </ScrollView>
 
       {/* Footer com Botão Fixo */}
-      <View style={styles.footer}>
+      <View style={[styles.footer, { backgroundColor: tema.card }]}>
         <TouchableOpacity
           style={[
             styles.botaoConfirmar,
+            { backgroundColor: tema.primaria },
             metodo === 'cartao' && !cartaoSalvo && styles.botaoDesabilitado,
           ]}
           onPress={confirmarPedido}
@@ -202,7 +221,7 @@ export default function Pagamento() {
         )}
 
         <TouchableOpacity style={styles.botaoVoltar} onPress={() => router.push('/Estudante/carrinho')}>
-          <Text style={styles.voltarTexto}>Alterar pedido</Text>
+          <Text style={[styles.voltarTexto, { color: tema.textoSecundario }]}>Alterar pedido</Text>
         </TouchableOpacity>
       </View>
     </View>

@@ -1,13 +1,15 @@
-import { View, Text, TouchableOpacity, StyleSheet, ScrollView, FlatList, Button } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, FlatList } from 'react-native';
 import { useRouter, useFocusEffect } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import {use, useCallback, useEffect, useState} from 'react'
+import { useCallback, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useTheme } from '../context/ThemeContext';
 
 // Exemplo de dados para o carrinho
 
 export default function Carrinho() {
-  const router = useRouter('/Estudante/carrinho');
+  const router = useRouter();
+  const { tema } = useTheme();
   const [carrinho, setCarrinho] = useState([]);
 
   useFocusEffect(
@@ -41,18 +43,21 @@ export default function Carrinho() {
 )
 
   const renderItem = ({ item }) => (
-    <View style={styles.itemContainer}>
+    <View style={[styles.itemContainer, { backgroundColor: tema.card, borderLeftColor: tema.primaria }]}>
       <View style={{flex:0.8}}>
-        <Text style={styles.itemNome}>{item.nome}</Text>
-        <Text style={styles.itemPreco}>R$ {(item.preco * item.qtd).toFixed(2)}</Text>
+        <Text style={[styles.itemNome, { color: tema.texto }]}>{item.nome}</Text>
+        <Text style={[styles.itemPreco, { color: tema.textoSecundario }]}>R$ {(item.preco * item.qtd).toFixed(2)}</Text>
       </View>
 
-      <View style={[styles.qtdContainer]}>
-        <Text style={styles.qtdTexto}>{item.qtd}x</Text>
+      <View style={[styles.qtdContainer, { backgroundColor: tema.fundo }]}>
+        <Text style={[styles.qtdTexto, { color: tema.primaria }]}>{item.qtd}x</Text>
       </View>
-      <View style={styles.cancelContainer}>
-        <TouchableOpacity style={styles.cancelContainer} onPress={() => removerItem(item.id)}>
-          <Ionicons name="close" size={20} color="#F23064" />
+      <View style={[styles.cancelContainer, { backgroundColor: tema.fundo }]}>
+        <TouchableOpacity
+          style={[styles.cancelContainer, { backgroundColor: tema.fundo }]}
+          onPress={() => removerItem(item.id)}
+        >
+          <Ionicons name="close" size={20} color={tema.primaria} />
         </TouchableOpacity>
 
       </View>
@@ -61,10 +66,10 @@ export default function Carrinho() {
 
   return (
 
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: tema.fundo }]}>
       {/* Cabeçalho */}
-      <View style={styles.header}>
-        <Text style={styles.headerTitle}>Meu Carrinho</Text>
+      <View style={[styles.header, { borderBottomColor: tema.borda }]}>
+        <Text style={[styles.headerTitle, { color: tema.primaria }]}>Meu Carrinho</Text>
       </View>
 
       {/* Lista de Itens */}
@@ -76,14 +81,14 @@ export default function Carrinho() {
       />
 
       {/* Resumo e Botão de Finalizar */}
-      <View style={styles.footer}>
+      <View style={[styles.footer, { backgroundColor: tema.card }]}>
         <View style={styles.totalRow}>
-          <Text style={styles.totalLabel}>Total:</Text>
-          <Text style={styles.totalValor}>R$ {subtotal.toFixed(2)}</Text>
+          <Text style={[styles.totalLabel, { color: tema.texto }]}>Total:</Text>
+          <Text style={[styles.totalValor, { color: tema.texto }]}>R$ {subtotal.toFixed(2)}</Text>
         </View>
 
         <TouchableOpacity 
-            style={styles.botaoFinalizar}
+            style={[styles.botaoFinalizar, { backgroundColor: tema.primaria, shadowColor: tema.primaria }]}
             onPress={() => router.push('/pagamento')}
         >
           <Text style={styles.botaoTexto}>FINALIZAR PEDIDO</Text>
@@ -93,7 +98,7 @@ export default function Carrinho() {
           style={styles.botaoVoltar}
           onPress={() => router.back()}
         >
-          <Text style={styles.voltarTexto}>Adicionar mais itens</Text>
+          <Text style={[styles.voltarTexto, { color: tema.textoSecundario }]}>Adicionar mais itens</Text>
         </TouchableOpacity>
       </View>
     </View>

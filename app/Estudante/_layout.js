@@ -1,27 +1,37 @@
-import { Tabs, Stack } from 'expo-router';
+import { Tabs } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
+import { useTheme } from '../context/ThemeContext';
+
 export default function Layout() {
+  const { tema } = useTheme();
+
   return (
-    <Tabs screenOptions={{ 
-      tabBarActiveTintColor: '#FF006E', 
-      headerTitleStyle:{
-        color: "#ffffff"
-      },
-      headerStyle:{
-        backgroundColor: "#262626",
-      },
-      tabBarStyle:{
-        backgroundColor: "#262626",
-        borderTopWidth: 0,
-        elevation: 0
-      },
-      headerShadowVisible: false
-      }}>
+    <Tabs
+      screenOptions={{
+        tabBarActiveTintColor: tema.primaria,
+        tabBarInactiveTintColor: tema.textoSecundario,
+        headerTitleStyle: {
+          color: tema.texto,
+        },
+        headerStyle: {
+          backgroundColor: tema.card,
+        },
+        sceneStyle: {
+          backgroundColor: tema.fundo,
+        },
+        tabBarStyle: {
+          backgroundColor: tema.tabBar,
+          borderTopWidth: 0,
+          elevation: 0,
+        },
+        headerShadowVisible: false,
+      }}
+    >
       <Tabs.Screen
         name="cardapio"
         options={{
           title: 'cardapio',
-          tabBarIcon: ({ color }) => <Ionicons name="reader-outline" size={24} color={color}/>
+          tabBarIcon: ({ color }) => <Ionicons name="reader-outline" size={24} color={color} />
         }}
       />
       <Tabs.Screen
@@ -35,7 +45,7 @@ export default function Layout() {
         name="config"
         options={{
           title: 'Configurações',
-          tabBarIcon: ({ color }) => <Ionicons name="settings" size={24} color={color}/>
+          tabBarIcon: ({ color }) => <Ionicons name="settings" size={24} color={color} />
         }}
       />
       <Tabs.Screen
@@ -45,7 +55,6 @@ export default function Layout() {
           tabBarIcon: ({ color }) => <Ionicons name="close" size={24} color={color} />,
         }}
       />
-      
     </Tabs>
   );
 }
