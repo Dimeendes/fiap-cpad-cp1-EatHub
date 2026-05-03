@@ -127,7 +127,3 @@ https://drive.google.com/file/d/1URXAff2yyXxNUFbnjwHG9uWsHWAWcj0H/view?usp=shari
 
 
 ---
-
-## Licença e uso acadêmico
-
-Projeto desenvolvido no contexto de curso (FIAP / CPA). Uso educacional salvo indicação contrária no repositório remoto.
