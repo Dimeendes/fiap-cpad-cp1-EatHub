@@ -43,12 +43,24 @@ Os hooks utilizados foram:
 - Alert
 - createContext
 - useContext
+- useTheme
+
+Context criado:
+- Theme context, que gerencia o tema global do app(claro, escuro, normal)
 
 
 Pré-requisitos: 
 - Node.js
 - ExpoGo
 - Expo router
+
+
+Diferencial Implementado:
+
+Escolha de temas pelo usuário, que funcionam em todo o app. Tem os temas claro, dark e normal, sempre respeitando a estética da FIAP. 
+Esse diferencial foi escolhido, pois já havíamos começado a implementá-lo na primeira entrega do projeto, e agora aprimoramos o seu uso por meio de um estado global.
+
+Foi criado um ThemeContext com três temas, cada um com duas cores: primaria e fundo. O contexto é inicializado com o tema normal, e por meio de um hook useTheme(), permite que a alteração do tema permaneça nas outras telas.
 
 Como clonar o projeto:
 
