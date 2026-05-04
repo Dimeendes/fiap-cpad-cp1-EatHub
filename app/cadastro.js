@@ -2,6 +2,7 @@ import { View, Text, TouchableOpacity, StyleSheet, Image, TextInput, Alert } fro
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import { useUser } from './context/UserContext';
+import { Ionicons } from '@expo/vector-icons';
 export default function Cadastro() {
   const router = useRouter();
   const [nome, setNome] = useState('');
@@ -12,6 +13,8 @@ export default function Cadastro() {
   const[erroEmail, setErroEmail] = useState('');
   const[erroSenha, setErroSenha] = useState('');
   const[erroConfirmacao, setErroConfirmacao] = useState('');
+  const[senhaVisivel, setSenhaVisivel] = useState(false);
+  const[senhaConfirmacaoVisivel, setSenhaConfirmacaoVisivel] = useState(false);
     const { cadastrarUsuario } = useUser();
  
     async function realizarCadastro() {
@@ -75,11 +78,21 @@ export default function Cadastro() {
             {erroEmail ? <Text style={styles.erro}>{erroEmail}</Text> : null}
  
             <Text style={styles.paragrafo}>Senha:</Text>
-            <TextInput style={styles.caixaTexto} onChangeText={setSenha} value={senha} placeholder='Digite sua senha' placeholderTextColor={'#bbb'}/>
+            <View style={styles.containerSenha}>
+              <TextInput style={styles.caixaTextoSenha} onChangeText={setSenha} value={senha} secureTextEntry={!senhaVisivel} placeholder='Digite sua senha' placeholderTextColor={'#bbb'}/>
+              <TouchableOpacity style={styles.botaoVerSenha} onPress={() => setSenhaVisivel(!senhaVisivel)}>
+                <Ionicons name={senhaVisivel ? 'eye' : 'eye-off'} size={24} color="#bbb" />
+              </TouchableOpacity>
+            </View>
             {erroSenha ? <Text style={styles.erro}>{erroSenha}</Text> : null}
  
             <Text style={styles.paragrafo}>Confirme a Senha:</Text>
-            <TextInput style={styles.caixaTexto} onChangeText={setSenhaConfirmacao} value={senhaConfirmacao} placeholder='Digite sua senha novamente' placeholderTextColor={'#bbb'}/>
+            <View style={styles.containerSenha}>
+              <TextInput style={styles.caixaTextoSenha} onChangeText={setSenhaConfirmacao} value={senhaConfirmacao} secureTextEntry={!senhaConfirmacaoVisivel} placeholder='Digite sua senha novamente' placeholderTextColor={'#bbb'}/>
+              <TouchableOpacity style={styles.botaoVerSenha} onPress={() => setSenhaConfirmacaoVisivel(!senhaConfirmacaoVisivel)}>
+                <Ionicons name={senhaConfirmacaoVisivel ? 'eye' : 'eye-off'} size={24} color="#bbb" />
+              </TouchableOpacity>
+            </View>
             {erroConfirmacao ? <Text style={styles.erro}>{erroConfirmacao}</Text> : null}
  
             <TouchableOpacity style={styles.botaoVoltar} onPress={() => router.push('/') }>
@@ -105,4 +118,7 @@ const styles = StyleSheet.create({
   botaoCadastro: { backgroundColor: '#F23064', padding: 16, borderRadius: 12, marginBottom: 4, width: 150, alignItems: 'center', justifyContent: 'center', marginTop: 12},
   textoCadastro: { color: '#fff', fontSize: 16, fontWeight: 600, alignItems: 'center', justifyContent: 'center'},
   caixaTexto:    { border: 'none', borderRadius: 360, backgroundColor: '#404040', padding: 10, width: 240, color: '#fff', marginBottom: 15},
+  containerSenha: { width: 240,flexDirection: 'row', alignItems: 'center', backgroundColor: '#404040', borderRadius: 360, paddingRight: 10, marginBottom: 15},
+  caixaTextoSenha: { border: 'none', padding: 10, width: 210, color: '#fff', flex: 1},
+  botaoVerSenha: { padding: 5},
 });
