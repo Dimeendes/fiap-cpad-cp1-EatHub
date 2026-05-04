@@ -2,12 +2,14 @@ import { View, Text, TouchableOpacity, StyleSheet, Image, TextInput, Alert } fro
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import { useUser } from './context/UserContext';
+import { Ionicons } from '@expo/vector-icons';
 export default function Login() {
   const router = useRouter();
   const[email, setEmail] = useState('');
   const[senha, setSenha] = useState('');
   const[erro, setErro] = useState('');
   const[pagina, setPagina] = useState('login');
+  const[senhaVisivel, setSenhaVisivel] = useState(false);
   const { login } = useUser();
  
   function entrarSistema(){
@@ -34,7 +36,12 @@ export default function Login() {
             <TextInput style={styles.caixaTexto} onChangeText={setEmail} value={email} placeholder='Digite seu email' placeholderTextColor={'#bbb'}/>
  
             <Text style={styles.paragrafo}>Senha:</Text>
-            <TextInput style={styles.caixaTexto} onChangeText={setSenha} value={senha} placeholder='Digite sua senha' placeholderTextColor={'#bbb'}/>
+            <View style={styles.containerSenha}>
+              <TextInput style={styles.caixaTextoSenha} onChangeText={setSenha} value={senha} secureTextEntry={!senhaVisivel} placeholder='Digite sua senha' placeholderTextColor={'#bbb'}/>
+              <TouchableOpacity style={styles.botaoVerSenha} onPress={() => setSenhaVisivel(!senhaVisivel)}>
+                <Ionicons name={senhaVisivel ? 'eye' : 'eye-off'} size={24} color="#bbb" />
+              </TouchableOpacity>
+            </View>
             {erro ? <Text style={styles.erro}>{erro}</Text> : null}
  
             <TouchableOpacity style={styles.botaoCadastro} onPress={() => router.push('cadastro')}>
@@ -60,5 +67,8 @@ const styles = StyleSheet.create({
   botaoLogin:    { backgroundColor: '#F23064', padding: 16, borderRadius: 12, marginBottom: 4, width: 150, alignItems: 'center', justifyContent: 'center', marginTop: 12},
   textoLogin:    { color: '#fff', fontSize: 16, fontWeight: 600, alignItems: 'center', justifyContent: 'center'},
   caixaTexto:    { border: 'none', borderRadius: 360, backgroundColor: '#404040', padding: 10, width: 240, color: '#fff', marginBottom: 10},
+  containerSenha: { width: 240, flexDirection: 'row', alignItems: 'center', backgroundColor: '#404040', borderRadius: 360, paddingRight: 10, marginBottom: 10},
+  caixaTextoSenha: { border: 'none', padding: 10, width: 210, color: '#fff', flex: 1},
+  botaoVerSenha: { padding: 5},
  
 });
