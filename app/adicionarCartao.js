@@ -4,9 +4,12 @@ import {
   StyleSheet, ScrollView, Alert, KeyboardAvoidingView, Platform
 } from 'react-native';
 import { useRouter, useFocusEffect } from 'expo-router';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-
-const CARTAO_KEY = 'cartao';
+import { useUser } from './context/UserContext';
+import {
+  loadCartaoParaUsuario,
+  salvarCartaoParaUsuario,
+  removerCartaoDoUsuario,
+} from './utils/cartaoStorage';
 
 function formatarNumero(texto) {
   const nums = texto.replace(/\D/g, '').slice(0, 16);
@@ -57,6 +60,10 @@ function validarCamposCartao({ numLimpo, nome, validade, cvv }) {
 
 export default function AdicionarCartao() {
   const router = useRouter();
+  const { usuarioLogado } = useUser();
+  const usuarioId = usuarioLogado
+    ? `${usuarioLogado.emailRM || ''}${usuarioLogado.emailRF || ''}${usuarioLogado.email || ''}`.trim().toLowerCase()
+    : '';
   const [numero, setNumero] = useState('');
   const [nome, setNome] = useState('');
   const [validade, setValidade] = useState('');
@@ -66,18 +73,31 @@ export default function AdicionarCartao() {
   useFocusEffect(
     useCallback(() => {
       carregarCartao();
-    }, [])
+    }, [usuarioId])
   );
 
   const carregarCartao = async () => {
-    const dados = await AsyncStorage.getItem(CARTAO_KEY);
-    if (dados) {
-      const cartao = JSON.parse(dados);
-      setNumero(cartao.numero);
-      setNome(cartao.nome);
-      setValidade(cartao.validade);
-      setCvv(cartao.cvv);
+    if (!usuarioLogado) {
+      setNumero('');
+      setNome('');
+      setValidade('');
+      setCvv('');
+      setTemCartao(false);
+      return;
+    }
+    const cartao = await loadCartaoParaUsuario(usuarioLogado);
+    if (cartao) {
+      setNumero(cartao.numero ?? '');
+      setNome(cartao.nome ?? '');
+      setValidade(cartao.validade ?? '');
+      setCvv(cartao.cvv ?? '');
       setTemCartao(true);
+    } else {
+      setNumero('');
+      setNome('');
+      setValidade('');
+      setCvv('');
+      setTemCartao(false);
     }
   };
 
@@ -95,10 +115,15 @@ export default function AdicionarCartao() {
       return;
     }
 
+    if (!usuarioLogado) {
+      Alert.alert('Login necessário', 'Faça login para salvar um cartão neste aparelho.');
+      return;
+    }
+
     const cartao = { numero, nome: nome.trim().toUpperCase(), validade, cvv };
 
     try {
-      await AsyncStorage.setItem(CARTAO_KEY, JSON.stringify(cartao));
+      await salvarCartaoParaUsuario(usuarioLogado, cartao);
       setTemCartao(true);
       router.replace('/pagamento');
     } catch (e) {
@@ -110,11 +135,15 @@ export default function AdicionarCartao() {
   };
 
   const removerCartao = async () => {
+    if (!usuarioLogado) {
+      Alert.alert('Login necessário', 'Faça login para gerenciar o cartão.');
+      return;
+    }
     Alert.alert('Remover cartão', 'Deseja remover o cartão salvo?', [
       { text: 'Cancelar', style: 'cancel' },
       {
         text: 'Remover', style: 'destructive', onPress: async () => {
-          await AsyncStorage.removeItem(CARTAO_KEY);
+          await removerCartaoDoUsuario(usuarioLogado);
           setNumero(''); setNome(''); setValidade(''); setCvv('');
           setTemCartao(false);
         }

@@ -3,10 +3,14 @@ import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Alert } from 'rea
 import { useRouter, useFocusEffect } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useUser } from './context/UserContext';
+import { loadCartaoParaUsuario } from './utils/cartaoStorage';
 
 export default function Pagamento() {
   const router = useRouter();
-  const { user } = useUser();
+  const { usuarioLogado } = useUser();
+  const usuarioId = usuarioLogado
+    ? `${usuarioLogado.emailRM || ''}${usuarioLogado.emailRF || ''}${usuarioLogado.email || ''}`.trim().toLowerCase()
+    : '';
   const [metodo, setMetodo] = useState('pix');
   const [carrinho, setCarrinho] = useState([]);
   const [cartaoSalvo, setCartaoSalvo] = useState(null);
@@ -14,16 +18,15 @@ export default function Pagamento() {
   useFocusEffect(
     useCallback(() => {
       carregarDados();
-    }, [])
+    }, [usuarioId])
   );
 
   const carregarDados = async () => {
     const dadosCarrinho = await AsyncStorage.getItem('carrinho');
     if (dadosCarrinho) setCarrinho(JSON.parse(dadosCarrinho));
 
-    const dadosCartao = await AsyncStorage.getItem('cartao');
-    if (dadosCartao) setCartaoSalvo(JSON.parse(dadosCartao));
-    else setCartaoSalvo(null);
+    const cartao = await loadCartaoParaUsuario(usuarioLogado);
+    setCartaoSalvo(cartao);
   };
 
   const subTotal = carrinho.reduce((acc, item) => acc + item.preco * item.qtd, 0);
@@ -56,8 +59,8 @@ export default function Pagamento() {
 
     const novoPedido = {
       id: Date.now(),
-      nome: user?.nome || user?.rm || 'Estudante',
-      rm: user?.rm || '',
+      nome: usuarioLogado?.nome || 'Estudante',
+      rm: usuarioLogado?.emailRM || usuarioLogado?.emailRF || usuarioLogado?.email || '',
       status: 'preparando',
       carrinho: carrinho,
       carrinhoTexto: carrinho.map(i => `${i.qtd}x ${i.nome}`).join('\n'),
