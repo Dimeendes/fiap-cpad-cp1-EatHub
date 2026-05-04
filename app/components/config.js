@@ -1,50 +1,52 @@
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
-import { useRouter } from 'expo-router';
-import { useState } from 'react';
- 
-const TEMAS = {
-  normal: { primaria: '#BF3B5E', fundo: '#404040' },
-  claro:  { primaria: '#F23064', fundo: '#FFFFFF' },
-  dark:   { primaria: '#BF3B5E', fundo: '#262626' },
-};
+import { useTheme } from '../context/ThemeContext';
  
 export default function Configuracoes() {
-  const router = useRouter();
-  const [temaSelecionado, setTemaSelecionado] = useState('normal');
- 
-  const tema = TEMAS[temaSelecionado];
+  const { temaSelecionado, setTemaSelecionado, tema } = useTheme();
  
   return (
     <View style={[styles.container, { backgroundColor: tema.fundo }]}>
-      <Text style={[styles.titulo, { color: tema.primaria }]}> Configurações</Text>
+      <Text style={[styles.titulo, { color: tema.primaria }]}>Configurações</Text>
  
-      <Text style={[styles.subtitulo, { color: tema.primaria }]}>Tema</Text>
+      <Text style={[styles.subtitulo, { color: tema.texto }]}>Tema</Text>
  
       <TouchableOpacity
-        style={[styles.botaoTema, temaSelecionado === 'normal' && { borderColor: tema.primaria, borderWidth: 2 }]}
+        style={[
+          styles.botaoTema,
+          { backgroundColor: tema.card },
+          temaSelecionado === 'normal' && { borderColor: tema.primaria, borderWidth: 2 },
+        ]}
         onPress={() => setTemaSelecionado('normal')}
       >
         <View style={[styles.amostra, { backgroundColor: '#BF3B5E' }]} />
         <View style={[styles.amostra, { backgroundColor: '#404040' }]} />
-        <Text style={styles.botaoTemaTexto}>Normal</Text>
+        <Text style={[styles.botaoTemaTexto, { color: tema.texto }]}>Normal</Text>
       </TouchableOpacity>
  
       <TouchableOpacity
-        style={[styles.botaoTema, temaSelecionado === 'claro' && { borderColor: tema.primaria, borderWidth: 2 }]}
+        style={[
+          styles.botaoTema,
+          { backgroundColor: tema.card },
+          temaSelecionado === 'claro' && { borderColor: tema.primaria, borderWidth: 2 },
+        ]}
         onPress={() => setTemaSelecionado('claro')}
       >
         <View style={[styles.amostra, { backgroundColor: '#F23064' }]} />
         <View style={[styles.amostra, { backgroundColor: '#FFFFFF', borderWidth: 1, borderColor: '#ccc' }]} />
-        <Text style={styles.botaoTemaTexto}>Claro</Text>
+        <Text style={[styles.botaoTemaTexto, { color: tema.texto }]}>Claro</Text>
       </TouchableOpacity>
  
       <TouchableOpacity
-        style={[styles.botaoTema, temaSelecionado === 'dark' && { borderColor: tema.primaria, borderWidth: 2 }]}
+        style={[
+          styles.botaoTema,
+          { backgroundColor: tema.card },
+          temaSelecionado === 'dark' && { borderColor: tema.primaria, borderWidth: 2 },
+        ]}
         onPress={() => setTemaSelecionado('dark')}
       >
         <View style={[styles.amostra, { backgroundColor: '#BF3B5E' }]} />
         <View style={[styles.amostra, { backgroundColor: '#262626' }]} />
-        <Text style={styles.botaoTemaTexto}>Dark</Text>
+        <Text style={[styles.botaoTemaTexto, { color: tema.texto }]}>Dark</Text>
       </TouchableOpacity>
     </View>
   );

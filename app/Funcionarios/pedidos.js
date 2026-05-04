@@ -3,6 +3,7 @@ import { useRouter } from 'expo-router';
 import { useState, useCallback } from 'react';
 import { useFocusEffect } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useTheme } from '../context/ThemeContext';
 
 function formatarCarrinho(carrinho) {
   if (!carrinho) return '';
@@ -20,6 +21,7 @@ function iconeMetodo(metodo) {
 
 export default function Pedidos() {
   const router = useRouter();
+  const { tema } = useTheme();
   const [activeTab, setActiveTab] = useState('preparando');
   const [pedidos, setPedidos] = useState([]);
 
@@ -52,24 +54,39 @@ export default function Pedidos() {
   const totalProntos = pedidosHoje.filter(p => p.status === 'pronto').length;
 
   return (
-    <ScrollView contentContainerStyle={styles.container} showsVerticalScrollIndicator={false}>
-      <Text style={styles.titulo}>Pedidos — {hoje}</Text>
+    <ScrollView
+      contentContainerStyle={[styles.container, { backgroundColor: tema.fundo }]}
+      showsVerticalScrollIndicator={false}
+    >
+      <Text style={[styles.titulo, { color: tema.texto }]}>Pedidos — {hoje}</Text>
 
-      <View style={styles.tabsContainer}>
+      <View style={[styles.tabsContainer, { backgroundColor: tema.card }]}>
         <TouchableOpacity
-          style={[styles.tab, activeTab === 'preparando' && styles.activeTab]}
+          style={[styles.tab, activeTab === 'preparando' && { backgroundColor: tema.primaria }]}
           onPress={() => setActiveTab('preparando')}
         >
-          <Text style={[styles.tabText, activeTab === 'preparando' && styles.activeTabText]}>
+          <Text
+            style={[
+              styles.tabText,
+              { color: activeTab === 'preparando' ? '#fff' : tema.texto },
+              activeTab === 'preparando' && styles.activeTabText,
+            ]}
+          >
             Preparando {totalPreparando > 0 ? `(${totalPreparando})` : ''}
           </Text>
         </TouchableOpacity>
 
         <TouchableOpacity
-          style={[styles.tab, activeTab === 'pronto' && styles.activeTab]}
+          style={[styles.tab, activeTab === 'pronto' && { backgroundColor: tema.primaria }]}
           onPress={() => setActiveTab('pronto')}
         >
-          <Text style={[styles.tabText, activeTab === 'pronto' && styles.activeTabText]}>
+          <Text
+            style={[
+              styles.tabText,
+              { color: activeTab === 'pronto' ? '#fff' : tema.texto },
+              activeTab === 'pronto' && styles.activeTabText,
+            ]}
+          >
             Prontos {totalProntos > 0 ? `(${totalProntos})` : ''}
           </Text>
         </TouchableOpacity>
@@ -77,7 +94,7 @@ export default function Pedidos() {
 
       {filtrados.length === 0 ? (
         <View style={styles.vazioContainer}>
-          <Text style={styles.vazioTexto}>
+          <Text style={[styles.vazioTexto, { color: tema.textoSecundario }]}>
             {activeTab === 'preparando'
               ? 'Nenhum pedido sendo preparado'
               : 'Nenhum pedido pronto ainda'}
@@ -85,36 +102,36 @@ export default function Pedidos() {
         </View>
       ) : (
         filtrados.map(pedido => (
-          <View key={pedido.id} style={styles.pedidosContainer}>
+          <View key={pedido.id} style={[styles.pedidosContainer, { backgroundColor: tema.card }]}>
 
             <View style={styles.pedidoHeader}>
-              <Text style={styles.pedidoId}>Pedido #{String(pedido.id).slice(-5)}</Text>
-              <Text style={styles.pedidoHorario}>🕐 {pedido.horario}</Text>
+              <Text style={[styles.pedidoId, { color: tema.primaria }]}>Pedido #{String(pedido.id).slice(-5)}</Text>
+              <Text style={[styles.pedidoHorario, { color: tema.textoSecundario }]}>🕐 {pedido.horario}</Text>
             </View>
 
-            <View style={styles.hr} />
+            <View style={[styles.hr, { backgroundColor: tema.borda }]} />
 
             <View style={styles.alunoRow}>
-              <Text style={styles.alunoLabel}>Aluno(a)</Text>
-              <Text style={styles.alunoNome}>{pedido.nome}</Text>
-              {pedido.rm ? <Text style={styles.alunoRm}>{pedido.rm}</Text> : null}
+              <Text style={[styles.alunoLabel, { color: tema.textoSecundario }]}>Aluno(a)</Text>
+              <Text style={[styles.alunoNome, { color: tema.texto }]}>{pedido.nome}</Text>
+              {pedido.rm ? <Text style={[styles.alunoRm, { color: tema.textoSecundario }]}>{pedido.rm}</Text> : null}
             </View>
 
-            <View style={styles.hr} />
+            <View style={[styles.hr, { backgroundColor: tema.borda }]} />
 
             <View style={styles.itensContainer}>
-              <Text style={styles.itensLabel}>Itens do pedido</Text>
-              <Text style={styles.itensTexto}>{formatarCarrinho(pedido.carrinho)}</Text>
+              <Text style={[styles.itensLabel, { color: tema.textoSecundario }]}>Itens do pedido</Text>
+              <Text style={[styles.itensTexto, { color: tema.texto }]}>{formatarCarrinho(pedido.carrinho)}</Text>
             </View>
 
-            <View style={styles.pedidoFooter}>
-              <Text style={styles.totalTexto}>Total: R$ {pedido.total?.toFixed(2)}</Text>
-              <Text style={styles.metodoTexto}>{iconeMetodo(pedido.metodoPagamento)}</Text>
+            <View style={[styles.pedidoFooter, { borderTopColor: tema.borda }]}>
+              <Text style={[styles.totalTexto, { color: tema.texto }]}>Total: R$ {pedido.total?.toFixed(2)}</Text>
+              <Text style={[styles.metodoTexto, { color: tema.textoSecundario }]}>{iconeMetodo(pedido.metodoPagamento)}</Text>
             </View>
 
             {pedido.status === 'preparando' ? (
               <TouchableOpacity
-                style={styles.botao}
+                style={[styles.botao, { backgroundColor: tema.primaria }]}
                 onPress={() => alternarStatus(pedido.id)}
               >
                 <Text style={styles.botaoTexto}>✅ Marcar como pronto</Text>

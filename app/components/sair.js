@@ -1,12 +1,18 @@
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
+import { useTheme } from '../context/ThemeContext';
  
 export default function Home() {
   const router = useRouter();
+  const { tema } = useTheme();
+
   return (
-    <View style={styles.container}>
-      <Text style={styles.titulo}>Quer mesmo sair de sua conta?</Text>
-      <TouchableOpacity style={styles.botao} onPress={() => router.push('/')}>
+    <View style={[styles.container, { backgroundColor: tema.fundo }]}>
+      <Text style={[styles.titulo, { color: tema.texto }]}>Quer mesmo sair de sua conta?</Text>
+      <TouchableOpacity
+        style={[styles.botao, { backgroundColor: tema.primaria }]}
+        onPress={() => router.push('/')}
+      >
         <Text style={styles.botaoTexto}>SAIR</Text>
       </TouchableOpacity>
     </View>
