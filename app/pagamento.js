@@ -4,6 +4,7 @@ import { useRouter, useFocusEffect } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useUser } from './context/UserContext';
 import { useTheme } from './context/ThemeContext';
+import { clearUserCart, getUserCart } from './utils/cartStorage';
 
 export default function Pagamento() {
   const router = useRouter();
@@ -16,12 +17,12 @@ export default function Pagamento() {
   useFocusEffect(
     useCallback(() => {
       carregarDados();
-    }, [])
+    }, [usuarioLogado])
   );
 
   const carregarDados = async () => {
-    const dadosCarrinho = await AsyncStorage.getItem('carrinho');
-    if (dadosCarrinho) setCarrinho(JSON.parse(dadosCarrinho));
+    const carrinhoSalvo = await getUserCart(usuarioLogado);
+    setCarrinho(carrinhoSalvo);
 
     const dadosCartao = await AsyncStorage.getItem('cartao');
     if (dadosCartao) setCartaoSalvo(JSON.parse(dadosCartao));
@@ -75,7 +76,7 @@ export default function Pagamento() {
       lista.push(novoPedido);
       await AsyncStorage.setItem('pedidos', JSON.stringify(lista));
 
-      await AsyncStorage.removeItem('carrinho');
+      await clearUserCart(usuarioLogado);
       setCarrinho([]);
 
       await AsyncStorage.setItem(

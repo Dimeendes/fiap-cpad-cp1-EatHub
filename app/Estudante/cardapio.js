@@ -1,13 +1,15 @@
 import { View, Text, TouchableOpacity, StyleSheet, Image, ScrollView } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useState, useEffect } from 'react';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useTheme } from '../context/ThemeContext';
+import { useUser } from '../context/UserContext';
+import { getUserCart, saveUserCart } from '../utils/cartStorage';
 
  
 export default function Cardapio() {
   const router = useRouter();
   const { tema } = useTheme();
+  const { usuarioLogado } = useUser();
   const [activeTab, setActiveTab] = useState('comidas');
   const [carrinho, setCarrinho] = useState([]);
 
@@ -59,35 +61,37 @@ export default function Cardapio() {
     },
   ];
 
-  useEffect(()=>{ carregarCarrinho();}, [])
+  useEffect(() => {
+    carregarCarrinho();
+  }, [usuarioLogado]);
 
-  const carregarCarrinho = async() =>{
-    const dados = await AsyncStorage.getItem('carrinho');
-    if (dados) setCarrinho(JSON.parse(dados))
-  }
-  const salvarCarrinho = async(lista) =>{
-    await AsyncStorage.setItem('carrinho', JSON.stringify(lista))
-  }
+  const carregarCarrinho = async () => {
+    const carrinhoSalvo = await getUserCart(usuarioLogado);
+    setCarrinho(carrinhoSalvo);
+  };
 
-  const adicionarCarrinho = async (item) =>{
-    const dados = await AsyncStorage.getItem('carrinho');
-    const carrinhoAtual = dados ? JSON.parse(dados) : [];
-    const index = carrinhoAtual.findIndex(i => i.id ===item.id.toString());
+  const salvarCarrinho = async (lista) => {
+    await saveUserCart(usuarioLogado, lista);
+  };
+
+  const adicionarCarrinho = async (item) => {
+    const carrinhoAtual = await getUserCart(usuarioLogado);
+    const index = carrinhoAtual.findIndex(i => i.id === item.id.toString());
     let novoCarrinho;
-    if(index !== -1){
-      novoCarrinho = carrinhoAtual.map((i,idx) =>{
-        if(idx === index){
-          return{...i, qtd: i.qtd + 1}
+    if (index !== -1) {
+      novoCarrinho = carrinhoAtual.map((i, idx) => {
+        if (idx === index) {
+          return { ...i, qtd: i.qtd + 1 };
         }
-        return i
+        return i;
       });
-    }else{
-      const novoItem = {id: item.id.toString(), nome: item.name, preco: parseFloat(item.price), qtd: 1};
-    novoCarrinho = [...carrinhoAtual, novoItem];
-  }
-    salvarCarrinho(novoCarrinho)
+    } else {
+      const novoItem = { id: item.id.toString(), nome: item.name, preco: parseFloat(item.price), qtd: 1 };
+      novoCarrinho = [...carrinhoAtual, novoItem];
+    }
+    await salvarCarrinho(novoCarrinho);
     setCarrinho(novoCarrinho);
-  }
+  };
  
   const currentItems = activeTab === 'comidas' ? comidas : bebidas;
  

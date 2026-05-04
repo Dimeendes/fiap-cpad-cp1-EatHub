@@ -2,40 +2,35 @@ import { View, Text, TouchableOpacity, StyleSheet, FlatList } from 'react-native
 import { useRouter, useFocusEffect } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useCallback, useState } from 'react';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useTheme } from '../context/ThemeContext';
+import { useUser } from '../context/UserContext';
+import { getUserCart, saveUserCart } from '../utils/cartStorage';
 
 // Exemplo de dados para o carrinho
 
 export default function Carrinho() {
   const router = useRouter();
   const { tema } = useTheme();
+  const { usuarioLogado } = useUser();
   const [carrinho, setCarrinho] = useState([]);
 
   useFocusEffect(
-    useCallback(() =>{
+    useCallback(() => {
       carregarCarrinho();
-    }, [])
+    }, [usuarioLogado])
   );
 
 
-  const carregarCarrinho = async() =>{
-    const dados = await AsyncStorage.getItem('carrinho');
-    if(dados) setCarrinho(JSON.parse(dados));
-    console.log(dados);
-  }
-  const salvarCarrinho = async(lista) =>{
-    await AsyncStorage.setItem('carrinho', JSON.stringify(lista))
-  }
+  const carregarCarrinho = async () => {
+    const carrinhoSalvo = await getUserCart(usuarioLogado);
+    setCarrinho(carrinhoSalvo);
+  };
 
   const removerItem = async (id) => {
-    setCarrinho((prev) => {
-    const novoCarrinho = prev.filter((item) => item.id !== id);
-    AsyncStorage.setItem('carrinho', JSON.stringify(novoCarrinho))
-
-    return novoCarrinho;
-     });
-  }
+    const novoCarrinho = carrinho.filter((item) => item.id !== id);
+    await saveUserCart(usuarioLogado, novoCarrinho);
+    setCarrinho(novoCarrinho);
+  };
 
   const subtotal = carrinho?.reduce(
   (acc, item) => acc +item.preco * item.qtd,
